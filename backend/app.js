@@ -1,4 +1,11 @@
 const path = require('path')
+const patientRoutes = require(path.join(__dirname,'routes','patients'))
+
+const Doctor = require(path.join(__dirname,'models','doctor'))
+const Patient = require(path.join(__dirname,'models','patient'))
+const Nurse = require(path.join(__dirname,'models','nurse'))
+
+
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
@@ -16,6 +23,7 @@ app.engine('ejs',ejsMate)
 app.use(methodOverride('_method'))
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
+app.use(express.static(path.join(__dirname,'public')))
 
 
 const sessionConfig = {
@@ -34,9 +42,33 @@ app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 
-// passport.use(new LocalStrategy(User.authenticate()))
-// passport.serializeUser(User.serializeUser())
-// passport.deserializeUser(User.deserializeUser())
+passport.use('doctor-local', new LocalStrategy(Doctor.authenticate()));
+passport.use('nurse-local', new LocalStrategy(Nurse.authenticate()));
+passport.use('patient-local', new LocalStrategy(Patient.authenticate()));
+
+// Shared serialize logic
+passport.serializeUser((user, done) => {
+    // Save both the user ID and their model type
+    done(null, { id: user._id, role: user.constructor.modelName });
+  });
+  
+  // Shared deserialize logic
+  passport.deserializeUser(async (data, done) => {
+    const { id, role } = data;
+  
+    let Model;
+    if (role === 'Doctor') Model = Doctor;
+    else if (role === 'Nurse') Model = Nurse;
+    else if (role === 'Patient') Model = Patient;
+    else return done(new Error('Unknown user role'));
+  
+    try {
+      const user = await Model.findById(id);
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
+});
 
 
 app.use((req,res,next)=>{
@@ -53,7 +85,7 @@ app.set('view engine','ejs')
 app.set('views',path.join(__dirname,'views'))
 
 
-mongoose.connect('mongodb://localhost:27017/swizz')
+mongoose.connect('mongodb://localhost:27017/loadout')
     .then(()=>{
         console.log('Connected to the DB'.bgWhite.black)
     })
@@ -66,6 +98,9 @@ app.listen(PORT,()=>{
 })
 
 
+app.use('/patients',patientRoutes)
+
+
 app.get('/',(req,res)=>{
-    res.send('<h1>Home</h1>')
+    res.render('home')
 })
