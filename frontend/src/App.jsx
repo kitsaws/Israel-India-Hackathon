@@ -6,6 +6,7 @@ import Media from './pages/Media'
 import ComfortControl from './pages/ComfortControl'
 import Family from './pages/Family'
 import Goals from './pages/Goals'
+import EyeTrackingToast from './components/ui/EyeTrackingToast'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         </Routes>
       <EmergencySidebar />
       </main>
+      <EyeTrackingToast />
     </div>
   )
 }

@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { House, Heart, Settings, MessageSquare, Target } from 'lucide-react';
 import NavbarTiles from './ui/NavbarTiles';
+import hospitalLogo from '../assets/hospital-logo.png';
 
 function Navbar() {
   return (
-    <nav className="w-full h-fit p-3 flex justify-around bg-primary shadow-md z-10">
+    <nav className="w-full h-fit p-3 flex justify-around items-center bg-primary shadow-md z-10 sticky top-0">
       <NavLink to="/" end>
         {({ isActive }) => (
           <NavbarTiles
@@ -53,6 +54,9 @@ function Navbar() {
             className={isActive ? "bg-primary-active" : ""}
           />
         )}
+      </NavLink>
+      <NavLink to="/" end>
+        <img id='logo' src={hospitalLogo} />
       </NavLink>
     </nav>
   );
