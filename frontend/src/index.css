@@ -18,11 +18,13 @@ html, body{
   /* --color-primary-light: oklch(0.8 0.12 180);
   --color-primary-dark: oklch(0.6 0.15 180); */
 
+  --color-accent: oklch(0.7461 0.155691 233.7807);  /* Blue */
+
   --color-secondary: oklch(0.9867 0.0064 17.27); /* Red */
   --color-secondary-active: oklch(0.8485 0.0827 18.93);
   --color-secondary-text: oklch(0.5444 0.2234 29.23);
 
   --color-bg: oklch(0.9702 0 0);
-  --color-muted: oklch(0.6 0.02 260);     /* Muted text */
-  --color-text: oklch(0.2 0.01 260);      /* Base text */
+  --color-text: oklch(0 0 0);      /* Base text */
+  --color-text-muted: oklch(0.6698 0 0);      /* Muted text */
 }
