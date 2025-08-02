@@ -1,23 +1,61 @@
-import React from 'react'
-import Home from '../pages/Home'
-import Media from '../pages/Media'
-import ComfortControl from '../pages/ComfortControl'
-import Family from '../pages/Family'
-import Goals from '../pages/Goals'
+import { NavLink } from 'react-router-dom';
+import { House, Heart, Settings, MessageSquare, Target } from 'lucide-react';
+import NavbarTiles from './ui/NavbarTiles';
 
-
-const NavBar = () => {
+function Navbar() {
   return (
-    <>
-        <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/media' element={<Media />} />
-            <Route path='/comfort-control' element={<ComfortControl />} />
-            <Route path='/family' element={<Family />} />
-            <Route path='/goals' element={<Goals />} />
-        </Routes>
-    </>
-  )
+    <nav className="w-full h-fit p-3 flex justify-around bg-primary shadow-md z-10">
+      <NavLink to="/" end>
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Home"
+            logo={<House />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+
+      <NavLink to="/media">
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Media"
+            logo={<Heart />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+
+      <NavLink to="/comfort-control">
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Comfort"
+            logo={<Settings />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+
+      <NavLink to="/family">
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Family"
+            logo={<MessageSquare />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+
+      <NavLink to="/goals">
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Goals"
+            logo={<Target />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+    </nav>
+  );
 }
 
-export default NavBar
+export default Navbar;
