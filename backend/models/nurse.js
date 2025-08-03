@@ -8,13 +8,27 @@ const nurseSchema = new Schema({
     },
     patient : {
         type : Schema.Types.ObjectId,
-        ref : 'Patient'
+        ref : 'Patient',
+        default : undefined
     },
     doctor : {
         type : Schema.Types.ObjectId,
-        ref : 'Doctor'
+        ref : 'Doctor',
+        default : undefined
     }
 })
+
+// Schema method to assign a patient
+nurseSchema.methods.assignPatient = async function (patientId) {
+    this.patient = patientId;
+    return await this.save();
+    };
+    
+    // Schema method to assign a doctor
+    nurseSchema.methods.assignDoctor = async function (doctorId) {
+    this.doctor = doctorId;
+    return await this.save();
+};
 
 nurseSchema.plugin(plm)
 
