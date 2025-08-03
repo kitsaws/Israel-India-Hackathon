@@ -1,5 +1,6 @@
 const path = require('path')
 const patientRoutes = require(path.join(__dirname,'routes','patients'))
+const patientApiRoutes = require(path.join(__dirname,'routes','api','patients'))
 
 const Doctor = require(path.join(__dirname,'models','doctor'))
 const Patient = require(path.join(__dirname,'models','patient'))
@@ -99,6 +100,8 @@ app.listen(PORT,()=>{
 
 
 app.use('/patients',patientRoutes)
+app.use('/api/patients',patientApiRoutes)
+
 
 
 app.get('/',(req,res)=>{

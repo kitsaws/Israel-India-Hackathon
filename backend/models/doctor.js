@@ -14,6 +14,8 @@ const doctorSchema = new Schema({
     ]
 })
 
+
+
 doctorSchema.methods.addPatient = function (patientId) {
     if (!this.patients.includes(patientId)) {
       this.patients.push(patientId);
