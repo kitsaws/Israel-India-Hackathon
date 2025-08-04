@@ -1,4 +1,5 @@
 const path = require('path')
+const cors = require('cors')
 const patientRoutes = require(path.join(__dirname,'routes','patients'))
 const patientApiRoutes = require(path.join(__dirname,'routes','api','patients'))
 
@@ -26,6 +27,7 @@ app.use(methodOverride('_method'))
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname,'public')))
+app.use(cors())
 
 
 const sessionConfig = {
