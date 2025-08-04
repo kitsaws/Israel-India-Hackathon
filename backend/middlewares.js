@@ -1,3 +1,5 @@
+
+
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) return next();
   req.flash('error', 'You must be signed in first!');
@@ -12,7 +14,28 @@ function isPatient(req, res, next) {
   return res.redirect('/');
 }
 
+function isFamily(req, res, next) {
+  if (req.isAuthenticated() && req.user.constructor.modelName === 'Family') {
+    return next();
+  }
+  req.flash('error', 'Access denied: Family only');
+  return res.redirect('/');
+}
+
+function isDoctor(req, res, next) {
+  if (req.isAuthenticated() && req.user.constructor.modelName === 'Doctor') {
+    return next();
+  }
+  req.flash('error', 'Access denied: Doctors only');
+  return res.redirect('/');
+}
+
+
+
+
 module.exports = {
   isLoggedIn,
-  isPatient
+  isPatient,
+  isDoctor,
+  isFamily,
 };

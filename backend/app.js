@@ -5,6 +5,7 @@ const patientApiRoutes = require(path.join(__dirname,'routes','api','patients'))
 const Doctor = require(path.join(__dirname,'models','doctor'))
 const Patient = require(path.join(__dirname,'models','patient'))
 const Nurse = require(path.join(__dirname,'models','nurse'))
+const Family = require(path.join(__dirname,'models','family'))
 
 
 const cookieParser = require('cookie-parser')
@@ -46,6 +47,7 @@ app.use(passport.session())
 passport.use('doctor-local', new LocalStrategy(Doctor.authenticate()));
 passport.use('nurse-local', new LocalStrategy(Nurse.authenticate()));
 passport.use('patient-local', new LocalStrategy(Patient.authenticate()));
+passport.use('family-local', new LocalStrategy(Family.authenticate()));
 
 // Shared serialize logic
 passport.serializeUser((user, done) => {
@@ -61,6 +63,7 @@ passport.serializeUser((user, done) => {
     if (role === 'Doctor') Model = Doctor;
     else if (role === 'Nurse') Model = Nurse;
     else if (role === 'Patient') Model = Patient;
+    else if (role === 'Family') Model = Family;
     else return done(new Error('Unknown user role'));
   
     try {
@@ -75,7 +78,7 @@ passport.serializeUser((user, done) => {
 app.use((req,res,next)=>{
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
-    res.locals.currUser = req.user   
+    res.locals.currUser = req.user
     next()
 })
 
@@ -107,3 +110,50 @@ app.use('/api/patients',patientApiRoutes)
 app.get('/',(req,res)=>{
     res.render('home')
 })
+
+app.get('/login',(req,res)=>{
+    res.render('login')
+})
+
+
+app.post('/login', (req, res, next) => {
+    const model = req.body.role
+
+    console.log(req.body)
+  
+    // Ensure model exists and is valid
+    if (!model || !['Doctor', 'Patient', 'Family', 'Nurse'].includes(model)) {
+        req.flash('error', 'Invalid role selected');
+        return res.redirect('/login');
+    }
+
+    // Dynamically authenticate using the selected model's strategy
+    passport.authenticate(`${model.toLowerCase()}-local`, { failureRedirect: '/login', failureFlash: true }, (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        
+        if (!user) {
+            req.flash('error', 'Invalid username or password or role');
+            return res.redirect('/login');
+        }
+
+        // Log the user in and proceed to next logic
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            
+            // Redirect to the user's dashboard based on the model
+            if (model === 'Doctor') {
+                return res.send('Doctor logged in')
+            } else if (model === 'Patient') {
+                return res.send('Patient logged in')
+            } else if (model === 'Family') {
+                return res.send('Family logged in')
+            } else if (model === 'Nurse') {
+                return res.send('Nurse logged in')
+            }
+        });
+    })(req, res, next);
+});
