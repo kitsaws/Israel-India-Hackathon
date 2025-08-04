@@ -12,5 +12,4 @@ router.get('/me',isPatient,async(req,res)=>{
     res.json(patient)
 })
 
-
 module.exports = router;

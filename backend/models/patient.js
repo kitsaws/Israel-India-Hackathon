@@ -29,6 +29,12 @@ const patientSchema = new Schema({
             type : Schema.Types.ObjectId,
             ref : 'Family'
         }
+    ],
+    goals : [
+        {
+            type : String,
+            default : 'none'
+        }
     ]
 })
 
