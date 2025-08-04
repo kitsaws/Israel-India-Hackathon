@@ -6,7 +6,7 @@ const Doctor = require(path.join(__dirname,'models','doctor'))
 const Patient = require(path.join(__dirname,'models','patient'))
 const Nurse = require(path.join(__dirname,'models','nurse'))
 
-
+const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const passport = require('passport')
@@ -25,6 +25,7 @@ app.use(methodOverride('_method'))
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname,'public')))
+app.use(cors())
 
 
 const sessionConfig = {
