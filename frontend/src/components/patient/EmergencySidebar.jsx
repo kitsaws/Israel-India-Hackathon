@@ -1,5 +1,5 @@
 import { TriangleAlert, Heart, Phone, Clock } from 'lucide-react'
-import SidebarTiles from './ui/SidebarTiles'
+import SidebarTiles from '../ui/SidebarTiles'
 
 const EmergencySidebar = () => {
   return (
