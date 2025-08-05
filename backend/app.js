@@ -1,7 +1,7 @@
 const path = require('path')
 const cors = require('cors')
 const patientRoutes = require(path.join(__dirname,'routes','patients'))
-const patientApiRoutes = require(path.join(__dirname,'routes','api','patients'))
+const apiRoutes = require(path.join(__dirname,'routes','api'))
 
 const Doctor = require(path.join(__dirname,'models','doctor'))
 const Patient = require(path.join(__dirname,'models','patient'))
@@ -105,7 +105,7 @@ app.listen(PORT,()=>{
 
 
 app.use('/patients',patientRoutes)
-app.use('/api/patients',patientApiRoutes)
+app.use('/api',apiRoutes)
 
 
 
@@ -159,3 +159,5 @@ app.post('/login', (req, res, next) => {
         });
     })(req, res, next);
 });
+
+
