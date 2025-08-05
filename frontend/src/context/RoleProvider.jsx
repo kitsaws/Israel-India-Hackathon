@@ -7,7 +7,7 @@ export const RoleProvider = ({ children }) => {
     useEffect(() => {
         const savedRole = localStorage.getItem('selectedRole');
         if (savedRole) {
-            setRole(JSON.parse(savedRole));
+            setRole(savedRole);
         }
     }, []);
 
