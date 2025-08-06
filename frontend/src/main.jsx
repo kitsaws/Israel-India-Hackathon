@@ -9,11 +9,11 @@ import App from './App.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <RoleProvider>
+      <RoleProvider>
+        <AuthProvider>
           <App />
-        </RoleProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </RoleProvider>
     </BrowserRouter>
   </StrictMode>,
 )
