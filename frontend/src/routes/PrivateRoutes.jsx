@@ -1,12 +1,19 @@
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import { useEffect } from "react";
 
 const PrivateRoutes = ({ children, role }) => {
-    const { user } = useAuth();
+    const { auth } = useAuth();
 
-    if(!user) return <Navigate to="/login" replace />
+    useEffect(() => {
+      console.log(`PrivateRoutes: Checking authentication for role: ${role}`);
+      console.log(auth.role === role)
 
-    if(role && user.role !== role) {
+    }, [role, auth]);
+
+    if(!auth.user) return <Navigate to="/role-select/login" replace />
+
+    if(role && auth.role !== role) {
         return <Navigate to='/' replace />
     }
 

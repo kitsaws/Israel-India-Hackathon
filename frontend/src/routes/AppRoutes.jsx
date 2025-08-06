@@ -1,4 +1,4 @@
-import React, { use, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 // import RoleSelection from '../pages/auth/RoleSelection'
 import RoleSelection1 from '../pages/auth/RoleSelection1'
@@ -17,47 +17,10 @@ import Goals from '../pages/patient/Goals'
 
 import PrivateRoutes from './PrivateRoutes'
 
-const AppRoutes = () => {
-    // RoleBased Auth Pages
-    // const { role } = useRole();
-    // useEffect(() => {
-    //     console.log('Current role:', role);
-    // }, [role]);
-
-    // const LoginPage = () => {
-    //     const { role } = useParams();
-    //     switch(role) {
-    //         case 'patient':
-    //             return <PatientLogin />;
-    //         // case 'doctor':
-    //         //     return <DoctorLogin />;
-    //         // case 'nurse':
-    //         //     return <NurseLogin />;
-    //         // case 'family':
-    //         //     return <FamilyLogin />>;
-    //         default:
-    //             return <Navigate to="/role-select/login" />;
-    //     }
-    // }
-    // const SignupPage = () => {
-    //     const { role } = useParams();
-    //     switch(role) {
-    //         case 'patient':
-    //             return <PatientSignup />;
-    //         // case 'doctor':
-    //         //     return <DoctorSignup />;
-    //         // case 'nurse':
-    //         //     return <NurseSignup />;
-    //         // case 'family':
-    //         //     return <FamilySignup />;
-    //         default:
-    //             return <Navigate to="/role-select/signup" />;
-    //     }
-    // }
-
+const AppRoutes = () => {    
   return (
     <Routes>
-        <Route path='/' element={<Navigate to="/role-select/login" />} />
+        <Route path='/' element={<Navigate to="/role-select/login" replace />} />
         <Route path='/role-select/login' element={<RoleSelection1 />} />
         <Route path='/role-select/signup' element={<RoleSelection1 />} />
         <Route path='/:role/login' element={<LoginPage />} />
