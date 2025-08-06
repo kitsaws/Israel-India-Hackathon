@@ -1,2 +1,30 @@
 @import "tailwindcss";
 
+html, body{
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#root{
+    height: 100%;
+    width: 100%;
+}
+
+@theme {
+  --color-primary: oklch(0.9962 0.0053 197.07); /* Blue */
+  --color-primary-active: oklch(0.8733 0.0631 255.1);
+  /* --color-primary-light: oklch(0.8 0.12 180);
+  --color-primary-dark: oklch(0.6 0.15 180); */
+
+  --color-accent: oklch(0.7461 0.155691 233.7807);  /* Blue */
+
+  --color-secondary: oklch(0.9867 0.0064 17.27); /* Red */
+  --color-secondary-active: oklch(0.8485 0.0827 18.93);
+  --color-secondary-text: oklch(0.5444 0.2234 29.23);
+
+  --color-background: oklch(0.9702 0 0);
+  --color-text: oklch(0 0 0);      /* Base text */
+  --color-text-muted: oklch(0.6698 0 0);      /* Muted text */
+}
