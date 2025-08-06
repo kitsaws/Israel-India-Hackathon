@@ -1,8 +1,9 @@
-import { useParams, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import PatientLogin from "./login/PatientLogin";
+import { useRole } from "../../context/RoleContext";
 
 const LoginPage = () => {
-    const { role } = useParams();
+    const { role } = useRole();
 
     switch (role) {
         case 'patient':
