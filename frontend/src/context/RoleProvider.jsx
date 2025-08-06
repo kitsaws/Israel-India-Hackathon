@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RoleContext } from './RoleContext';
 
 export const RoleProvider = ({ children }) => {
-    const [role, setRole] = useState(null);
+    const [role, setRole] = useState('dummyRole');
 
     useEffect(() => {
         const savedRole = localStorage.getItem('selectedRole');
