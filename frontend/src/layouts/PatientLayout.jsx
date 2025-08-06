@@ -6,17 +6,17 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const PatientLayout = ({ children }) => {
-    const { user } = useAuth();
+    const { auth } = useAuth();
     const navigate = useNavigate();
 
 
     useEffect(() => {
-        if (!user) {
-            navigate('/login');
+        if (!auth.user) {
+            navigate('/role-select/login', { replace: true });
         }
-    }, [user, navigate]);
+    }, [auth.user, navigate]);
 
-    if (!user) {
+    if (!auth.user) {
         return null; // Prevent rendering until redirect is handled
     }
 

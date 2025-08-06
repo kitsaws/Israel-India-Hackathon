@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useRole } from '../../../context/RoleContext';
+import { useAuth } from '../../../context/AuthContext';
 import axios from 'axios';
 import AuthLayout from '../AuthLayout';
 import SwitchRoleCard from '../../../components/auth/SwitchRoleCard';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
-  const { selectedRole } = useRole();
+  const { role } = useRole();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -29,10 +31,10 @@ export default function LoginPage() {
       });
 
       console.log('Login success:', response.data);
-      alert('Login successful!');
-      
+      setAuth({ loading: false, user: response.data, role });
+
       // Navigate to dashboard or appropriate page
-      navigate(`/${selectedRole}/dashboard`);
+      navigate(`/${role}/home`);
 
     } catch (error) {
       console.error('Login error:', error);

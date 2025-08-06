@@ -2,16 +2,17 @@ import React, { useState } from 'react'
 import AuthLayout from '../AuthLayout'
 import SwitchRoleCard from '../../../components/auth/SwitchRoleCard'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const PatientSignup = () => {
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     fullName: '',
     age: '',
     gender: '',
     password: '',
-    confirmPassword: '',
-    assignedNurse: '',
-    assignedDoctor: '',
+    confirmPassword: ''
   })
 
   const handleSubmit = async (e) => {
@@ -33,25 +34,22 @@ const PatientSignup = () => {
         fullName: formData.fullName,
         age: formData.age,
         gender: formData.gender,
-        password: formData.password,
-        assignedNurse: formData.assignedNurse,
-        assignedDoctor: formData.assignedDoctor
+        password: formData.password
       });
-
+      if(response.status !== 200) {
+        throw new Error('Failed to create account');
+      }
       console.log('Signup success:', response.data);
-      alert('Account created successfully!');
-
       // Optionally reset form
       setFormData({
         fullName: '',
         age: '',
         gender: '',
         password: '',
-        confirmPassword: '',
-        assignedNurse: '',
-        assignedDoctor: '',
+        confirmPassword: ''
       });
-
+      
+      navigate('/patients/login');
     } catch (error) {
       console.error('Signup failed:', error);
       alert(error.response?.data?.message || 'Signup failed. Please try again.');
@@ -141,7 +139,7 @@ const PatientSignup = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-5">
+          {/* <div className="flex flex-col sm:flex-row gap-5">
             <div className="flex-1">
               <label htmlFor="assigned-nurse" className="mb-1 block text-sm font-medium text-gray-700">Assigned Nurse</label>
               <input
@@ -167,11 +165,11 @@ const PatientSignup = () => {
                 required
               />
             </div>
-          </div>
+          </div> */}
 
           <button
             type="submit"
-            className="mt-6 bg-accent text-white font-medium py-3 rounded-md hover:bg-opacity-90 transition"
+            className="mt-6 bg-accent text-white font-medium cursor-pointer py-3 rounded-md hover:bg-opacity-90 transition"
             onClick={handleSubmit}
           >
             Create Account
