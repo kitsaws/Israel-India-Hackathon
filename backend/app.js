@@ -152,11 +152,17 @@ app.post('/login', (req, res, next) => {
 });
 
 app.get('/error',(req,res,next)=>{
-    next(new ApiError(300,"Error"))
+    next(new ApiError(444,"CUSTOM ERROR WORKING"))
 })
 
-app.use((err,req,res,next)=>{
-    console.log(err)
-})
+app.use((err, req, res, next) => {
+    console.log(err);
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        errors: err.errors || [],
+        data: err.data || null
+    });
+});
 
 module.exports=app
