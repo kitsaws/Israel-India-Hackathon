@@ -32,6 +32,28 @@ router.post('/auth/signup/patient',async(req,res)=>{
     }
 })
 
+
+router.post('/auth/patient/check', 
+  passport.authenticate('patient-local', { session: false }), // Disable session if API-based
+  async (req, res) => {
+    try {
+      // If authentication is successful, get user data
+      const user = await Patient.findById(req.user._id);
+
+      if (!user) {
+        // If no user is found, send failure
+        return res.json({ success: false, message: 'User not found' });
+      }
+
+      // Send success and user data
+      return res.json({ success: true, user });
+    } catch (error) {
+      // In case there's an error in fetching user data
+      return res.status(500).json({ success: false, message: 'Error fetching user data' });
+    }
+  }
+);
+
 router.post('/auth/login/patient', 
   passport.authenticate('patient-local', { failureRedirect: '/patients/login' }),
   async (req, res) => {
