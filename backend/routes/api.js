@@ -25,7 +25,7 @@ router.post('/auth/signup/patient',async(req,res)=>{
         })
         await Patient.register(newPatient,password)
         console.log(`Created patient: ${name} | username: ${username} | password: ${password}`);
-        return res.redirect('/patients/login')
+        return res.json({'success':true})
     }catch(err){
         console.log(err)
         return res.send(err)
@@ -33,7 +33,7 @@ router.post('/auth/signup/patient',async(req,res)=>{
 })
 
 
-router.post('/auth/patient/check', 
+router.post('/auth/patients/check', 
   passport.authenticate('patient-local', { session: false }), // Disable session if API-based
   async (req, res) => {
     try {
@@ -55,7 +55,7 @@ router.post('/auth/patient/check',
 );
 
 router.post('/auth/login/patient', 
-  passport.authenticate('patient-local', { failureRedirect: '/patients/login' }),
+  passport.authenticate('patient-local', { failureRedirect: '/patient/login' }),
   async (req, res) => {
     const id = req.user._id;
     console.log(id);
@@ -67,11 +67,11 @@ router.post('/auth/login/patient',
     req.login(req.user, (err) => {
       if (err) {
         // login again
-        return res.redirect('/api/auth/login/patient');
+        return res.status(501).json(err)
       }
       
       // Now the session is established, and you can proceed
-      return res.render('patients/view', { patient });
+      return res.json(patient)
     });
   }
 );
