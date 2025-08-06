@@ -2,6 +2,7 @@ const path = require('path')
 const cors = require('cors')
 const patientRoutes = require(path.join(__dirname,'routes','patients'))
 const apiRoutes = require(path.join(__dirname,'routes','api'))
+const ApiError = require(path.join(__dirname,'utils','ApiError'))
 
 const Doctor = require(path.join(__dirname,'models','doctor'))
 const Patient = require(path.join(__dirname,'models','patient'))
@@ -92,17 +93,6 @@ app.set('view engine','ejs')
 app.set('views',path.join(__dirname,'views'))
 
 
-mongoose.connect('mongodb://localhost:27017/loadout')
-    .then(()=>{
-        console.log('Connected to the DB'.bgWhite.black)
-    })
-    .catch(err=>{
-        console.log('DB not connected'.red)
-    })
-
-app.listen(PORT,()=>{
-    console.log(`Server live on http://localhost:${PORT}`.bgWhite.black)
-})
 
 
 app.use('/patients',patientRoutes)
@@ -161,4 +151,12 @@ app.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
+app.get('/error',(req,res,next)=>{
+    next(new ApiError(300,"Error"))
+})
 
+app.use((err,req,res,next)=>{
+    console.log(err)
+})
+
+module.exports=app
