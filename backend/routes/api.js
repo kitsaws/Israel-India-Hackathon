@@ -32,12 +32,27 @@ router.post('/auth/signup/patient',async(req,res)=>{
     }
 })
 
-router.post('/auth/login/patient',passport.authenticate('patient-local',{failureRedirect:'/patients/login'}),async(req,res)=>{
-    const id = req.user._id
-    console.log(id)
-    const patient = await Patient.findById(id)
-    console.log(patient)
-    return res.render('patients/view',{patient})
-})
+router.post('/auth/login/patient', 
+  passport.authenticate('patient-local', { failureRedirect: '/patients/login' }),
+  async (req, res) => {
+    const id = req.user._id;
+    console.log(id);
+    
+    const patient = await Patient.findById(id);
+    console.log(patient);
+    
+
+    req.login(req.user, (err) => {
+      if (err) {
+        // login again
+        return res.redirect('/api/auth/login/patient');
+      }
+      
+      // Now the session is established, and you can proceed
+      return res.render('patients/view', { patient });
+    });
+  }
+);
+
 
 module.exports = router;
