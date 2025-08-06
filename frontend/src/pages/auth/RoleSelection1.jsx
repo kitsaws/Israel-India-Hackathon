@@ -16,12 +16,16 @@ const RoleSelection1 = () => {
   const location = useLocation();
   const { updateRole, clearRole } = useRole();
 
-  useEffect(() => {
-    // if (location.pathname.startsWith('/role-select')){
-      clearRole();
-      console.log('Role cleared on mount');
-    // }
-  }, [])
+  // useEffect(() => {
+  //   const isAtRoleSelect =
+  //     location.pathname === '/role-select/login' ||
+  //     location.pathname === '/role-select/signup';
+
+  //   if (isAtRoleSelect) {
+  //     clearRole();
+  //     console.log('Role cleared on visiting role-select route');
+  //   }
+  // }, [location.pathname]);
 
 
   const authType = location.pathname.includes('login') ? 'login' : 'signup';
