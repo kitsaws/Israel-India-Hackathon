@@ -1,6 +1,7 @@
 import threading
 import cv2
 import time
+import pyautogui  # For triggering double click
 from blink_detector import BlinkDetector
 
 class BlinkDetectorRunner:
@@ -17,6 +18,9 @@ class BlinkDetectorRunner:
         self._stop_event = threading.Event()
         self.blink_count = 0
         self.thread = threading.Thread(target=self._run, daemon=True)
+
+        # Store blink timestamps to track recent blinks
+        self.blink_timestamps = []
 
     def start(self):
         print("Starting blink detection thread...")
@@ -55,9 +59,22 @@ class BlinkDetectorRunner:
             frame = cv2.flip(frame, 1)
             processed_frame = self.detector.process_frame(frame)
 
-            # Update blink count from detector
+            # Track blinks and timestamps
+            previous_blink_count = self.blink_count
             self.blink_count = self.detector.blink_count
-            
+
+            if self.blink_count > previous_blink_count:
+                now = time.time()
+                self.blink_timestamps.append(now)
+
+                # Keep only timestamps within the last 5 seconds
+                self.blink_timestamps = [t for t in self.blink_timestamps if now - t <= 3]
+
+                if len(self.blink_timestamps) >= 2:
+                    print("🖱️ Double blink detected - Performing double click!")
+                    pyautogui.click()
+                    self.blink_timestamps = []  # Reset to avoid multiple clicks
+
             cv2.imshow('Motion-Resistant Blink Detection', processed_frame)
 
             key = cv2.waitKey(1) & 0xFF
@@ -67,6 +84,7 @@ class BlinkDetectorRunner:
                 break
             elif key == ord('r'):
                 self.detector.blink_count = 0
+                self.blink_timestamps = []  # Reset blink window
                 print("🔄 Blink counter reset!")
             elif key == ord('c'):
                 self.detector.baseline_ear_history.clear()
@@ -93,4 +111,3 @@ class BlinkDetectorRunner:
         print("Stopping blink detection...")
         self._stop_event.set()
         self.thread.join()
-
