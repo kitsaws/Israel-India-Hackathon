@@ -5,8 +5,8 @@ import hospitalLogo from '../../assets/hospital-logo.png';
 
 function Navbar() {
   return (
-    <nav className="w-full h-[5 rem] p-3 flex justify-around items-center bg-primary shadow-md z-10 sticky top-0">
-      <NavLink to="/" end>
+    <nav className="w-full h-[20vh] p-3 flex justify-around items-center bg-primary shadow-md z-10 sticky top-0">
+      <NavLink to="/patient/home" end>
         {({ isActive }) => (
           <NavbarTiles
             name="Home"
@@ -16,7 +16,7 @@ function Navbar() {
         )}
       </NavLink>
 
-      <NavLink to="/media">
+      <NavLink to="/patient/media">
         {({ isActive }) => (
           <NavbarTiles
             name="Media"
@@ -26,7 +26,7 @@ function Navbar() {
         )}
       </NavLink>
 
-      <NavLink to="/comfort-control">
+      <NavLink to="/patient/comfort-control">
         {({ isActive }) => (
           <NavbarTiles
             name="Comfort"
@@ -36,7 +36,7 @@ function Navbar() {
         )}
       </NavLink>
 
-      <NavLink to="/family">
+      <NavLink to="/patient/family">
         {({ isActive }) => (
           <NavbarTiles
             name="Family"
@@ -46,7 +46,7 @@ function Navbar() {
         )}
       </NavLink>
 
-      <NavLink to="/goals">
+      <NavLink to="/patient/goals">
         {({ isActive }) => (
           <NavbarTiles
             name="Goals"
@@ -55,7 +55,7 @@ function Navbar() {
           />
         )}
       </NavLink>
-      <NavLink to="/" end>
+      <NavLink to="/patient/home" end>
         <img id='logo' src={hospitalLogo} />
       </NavLink>
     </nav>

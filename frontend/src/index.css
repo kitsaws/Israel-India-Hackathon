@@ -12,6 +12,10 @@ html, body{
     width: 100%;
 }
 
+img#logo{
+  height: 100px;
+}
+
 @theme {
   --color-primary: oklch(0.9962 0.0053 197.07); /* Blue */
   --color-primary-active: oklch(0.8733 0.0631 255.1);

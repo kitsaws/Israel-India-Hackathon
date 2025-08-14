@@ -3,16 +3,19 @@ import HomePageCard from '../../components/ui/HomePageCard'
 import { Heart, Clock } from 'lucide-react'
 import useClock from '../../hooks/useClock'
 import PatientLayout from '../../layouts/PatientLayout'
+import { useAuth } from '../../context/AuthContext'
 
 const Home = () => {
   const { date, time } = useClock();
+  const { auth } = useAuth();
+  const user = auth.user;
 
   return (
     <PatientLayout>
-      <div className='py-12 px-26 flex flex-col gap-10 justify-center items-center'>
+      <div className='py-8   px-26 flex flex-col gap-5 justify-center items-center'>
         {/* welcome msg */}
         <div id="welcome-message" className='flex flex-col justify-center items-center gap-1'>
-          <h2 className='text-4xl font-bold'>Welcome, John</h2>
+          <h2 className='text-4xl font-bold'>Welcome, {user.name}</h2>
           <p className='text-lg font-semibold text-text-muted'>{date}</p>
           <p className='text-md font-semibold text-accent'>{time}</p>
         </div>
