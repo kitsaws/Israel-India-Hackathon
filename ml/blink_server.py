@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from blink_detector_api import BlinkDetectorRunner
+from blink_detector_click_api import BlinkDetectorRunner
 
 app = Flask(__name__)
 

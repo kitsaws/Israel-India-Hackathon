@@ -4,4 +4,8 @@ pandas
 mediapipe
 flask
 flask-socketio
-cv2
+websockets
+scipy
+pyautogui
+keyboard
+pywin32
