@@ -1,10 +1,11 @@
 import React from 'react'
+import PatientLayout from '../../layouts/PatientLayout'
 
 const ComfortControl = () => {
   return (
-    <div>
+    <PatientLayout>
       
-    </div>
+    </PatientLayout>
   )
 }
 

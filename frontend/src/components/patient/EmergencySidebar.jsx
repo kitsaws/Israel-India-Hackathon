@@ -3,7 +3,7 @@ import SidebarTiles from '../ui/SidebarTiles'
 
 const EmergencySidebar = () => {
   return (
-    <div className='emergency-sidebar h-[80%] bg-secondary w-[20%] py-8 px-2'>
+    <div className='emergency-sidebar bg-secondary w-[20%] py-8 px-4'>
       <div id="logo" className='flex flex-col justify-center items-center text-2xl font-bold text-secondary-text'>
         <TriangleAlert size={60} />
         <span>Emergency Services</span>
