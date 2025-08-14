@@ -5,7 +5,7 @@ import hospitalLogo from '../../assets/hospital-logo.png';
 
 function Navbar() {
   return (
-    <nav className="w-full h-[5 rem] p-3 flex justify-around items-center bg-primary shadow-md z-10 sticky top-0">
+    <nav className="w-full h-[20vh] p-3 flex justify-around items-center bg-primary shadow-md z-10 sticky top-0">
       <NavLink to="/" end>
         {({ isActive }) => (
           <NavbarTiles
