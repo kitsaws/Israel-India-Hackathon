@@ -1,0 +1,5 @@
+# Ignore the virtual environment folder inside ml
+ml/env/
+
+# Ignore Python cache folders inside ml
+ml/__pycache__/
