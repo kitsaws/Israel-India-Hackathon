@@ -71,12 +71,13 @@ export default function LoginPage() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              autoComplete='off'
             />
           </div>
 
           <button
             type="submit"
-            className="mt-4 bg-accent text-white font-medium py-3 rounded-md hover:bg-opacity-90 transition"
+            className="cursor-pointer mt-4 bg-accent text-white font-medium py-3 rounded-md hover:bg-opacity-90 transition"
           >
             Login
           </button>
