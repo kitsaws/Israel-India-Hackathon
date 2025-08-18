@@ -1,5 +1,9 @@
+const path = require('path')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+
+const Patient = require(path.join(__dirname,'patient'))
+
 const plm = require('passport-local-mongoose')
 
 const nurseSchema = new Schema({
@@ -20,14 +24,56 @@ const nurseSchema = new Schema({
 
 // Schema method to assign a patient
 nurseSchema.methods.assignPatient = async function (patientId) {
-    this.patient = patientId;
-    return await this.save();
-    };
+  this.patient = patientId;
+  return await this.save();
+};
     
-    // Schema method to assign a doctor
-    nurseSchema.methods.assignDoctor = async function (doctorId) {
-    this.doctor = doctorId;
-    return await this.save();
+// Schema method to assign a doctor
+nurseSchema.methods.assignDoctor = async function (doctorId) {
+  this.doctor = doctorId;
+  return await this.save();
+};
+
+// Add goal
+nurseSchema.methods.setGoal = async function (description) {
+  if (!this.patient) throw new Error("No patient assigned to this nurse");
+
+  const patient = await Patient.findById(this.patient);
+  if (!patient) throw new Error("Patient not found");
+
+  patient.goals.push({ description });
+  await patient.save();
+
+  return patient.goals;
+};
+  
+// Mark goal completed
+nurseSchema.methods.completeGoal = async function (goalId) {
+  if (!this.patient) throw new Error("No patient assigned to this nurse");
+
+  const patient = await Patient.findById(this.patient);
+  if (!patient) throw new Error("Patient not found");
+
+  const goal = patient.goals.id(goalId);
+  if (!goal) throw new Error("Goal not found");
+
+  goal.completed = true;
+  goal.completedAt = new Date();
+
+  await patient.save();
+  return patient.goals;
+};
+  
+// Remove goal
+nurseSchema.methods.removeGoal = async function (goalId) {
+  if (!this.patient) throw new Error("No patient assigned to this nurse");
+
+  const patient = await Patient.findById(this.patient);
+  if (!patient) throw new Error("Patient not found");
+
+  patient.goals.id(goalId).remove();
+  await patient.save();
+  return patient.goals;
 };
 
 nurseSchema.plugin(plm)
