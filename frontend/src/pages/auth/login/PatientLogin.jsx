@@ -28,7 +28,7 @@ export default function LoginPage() {
       const response = await axios.post(`http://localhost:3000/api/auth/login/patient`, {
         username: formData.username,
         password: formData.password,
-      },{withCredentials: true});
+      });
 
       console.log('Login success:', response.data);
       setAuth({ loading: false, user: response.data, role });
