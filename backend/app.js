@@ -29,7 +29,12 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname,'public')))
-app.use(cors())
+
+
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    credentials: true
+}));
 
 
 const sessionConfig = {
