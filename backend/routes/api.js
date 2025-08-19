@@ -9,11 +9,11 @@ const Nurse = require(path.join(__dirname,'..','models','nurse'));
 const Family = require(path.join(__dirname,'..','models','family'));
 
 const {isPatient} = require(path.join(__dirname,'..','middlewares'));
-
 const {isLoggedIn} = require(path.join(__dirname,'..','middlewares'));
 
 const models = require(path.join(__dirname,'..','utils','mapModel'));
 
+// Passport authenticate helper for login only
 const passAuth = (req, res, next) => {
   const { role } = req.params;
 
@@ -21,8 +21,7 @@ const passAuth = (req, res, next) => {
     return res.status(400).json({ success: false, message: "Invalid Role" });
   }
 
-  // run passport auth properly
-  return passport.authenticate(`${role}-local`,{session:true})(req, res, next);
+  return passport.authenticate(`${role}-local`, { session: true })(req, res, next);
 };
 
 // router.get('/patients/me',isPatient,async(req,res)=>{
@@ -31,33 +30,26 @@ const passAuth = (req, res, next) => {
 //     res.json(patient)
 // })
 
-router.get('/:role/me',isLoggedIn,async(req,res)=>{
+// Session-based auth check
+router.get('/auth/me', isLoggedIn, async (req, res) => {
     try{
-      const {role}=req.params;
-
-      if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
-        return res.status(400).json({ success: false, message: "Invalid role" });
+      const roleFromSession = req.session.role || (req.user && req.user.constructor && req.user.constructor.modelName);
+      if(!req.user || !roleFromSession){
+        return res.status(401).json({ success: false, message: "Not authenticated" });
       }
 
-      if(!req.user){
-        return res.status(400).json({ success: false, message: "Auth failed" });
-      }
-
-      const Model=models[role.toLowerCase()]
+      const role = String(roleFromSession).toLowerCase();
+      const Model = models[role];
       if(!Model){
         return res.status(400).json({ success: false, message: "Invalid role" });
       }
 
-      const user=await Model.findById(req.user._id);
+      const user = await Model.findById(req.user._id);
       if(!user){
         return res.status(400).json({ success: false, message: "User not found" });
       }
 
-      return res.json({
-        success: true,
-        user,
-        role
-      });
+      return res.json({ success: true, user, role });
       
     }catch(err){
       res.status(500).json({success: false, message: "Error fetching profile"});
@@ -105,36 +97,27 @@ router.post('/auth/signup/patient',async(req,res)=>{
 //   }
 // );
 
-router.get('/auth/:role/check',passAuth,async (req, res) => {
-    try {
-      const {role}=req.params;
-      const Model = models[role.toLowerCase()];
-
-      if(!Model){
-        return res.status(400).json({ success: false, message: "Invalid role" });
-      }
-
-      if(!req.user){
-        return res.json({success: false,message: "Auth failed"});
-      }
-
-      const user=await Model.findById(req.user._id);
-      if(!user){
-        return res.status(400).json({ success: false, message: "User not found" });
-      }
-
-      return res.json({
-        success: true,
-        user,
-        role
-      });
-      
-    } catch (error) {
-      // In case there's an error in fetching user data
-      return res.status(500).json({ success: false, message: 'Error fetching user data' });
+// Remove LocalStrategy from auth checks; checks should be session-only via /auth/me
+// Keeping the old route but making it session-based for compatibility
+router.get('/auth/:role/check', isLoggedIn, async (req, res) => {
+  try {
+    const { role } = req.params;
+    if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
+      return res.status(400).json({ success: false, message: "Invalid role" });
     }
+    const Model = models[role.toLowerCase()];
+    if(!Model){
+      return res.status(400).json({ success: false, message: "Invalid role" });
+    }
+    const user = await Model.findById(req.user._id);
+    if(!user){
+      return res.status(400).json({ success: false, message: "User not found" });
+    }
+    return res.json({ success: true, user, role: role.toLowerCase() });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Error fetching user data' });
   }
-);
+});
 
 
 // router.post('/auth/login/patient', 
@@ -161,6 +144,10 @@ router.get('/auth/:role/check',passAuth,async (req, res) => {
 
 router.post('/auth/login/:role',passAuth,async (req, res) => {
     const {role} = req.params;
+    if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
+      return res.status(400).json({ success: false, message: "Invalid role" });
+    }
+    
     const Model = models[role.toLowerCase()];
     if(!Model){
       return res.status(400).json({ success: false, message: "Invalid role" });
@@ -179,6 +166,7 @@ router.post('/auth/login/:role',passAuth,async (req, res) => {
       }
       
       // Now the session is established, and you can proceed
+      req.session.role = role;
       return res.json({
         success: true,
         user,
