@@ -4,7 +4,7 @@ import SwitchRoleCard from '../../../components/auth/SwitchRoleCard'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-const PatientSignup = () => {
+const NurseSignup = () => {
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ const PatientSignup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/signup/patient', {
+      const response = await axios.post('http://localhost:3000/api/auth/signup/nurse', {
         fullName: formData.fullName,
         age: formData.age,
         gender: formData.gender,
@@ -49,7 +49,7 @@ const PatientSignup = () => {
         confirmPassword: ''
       });
 
-      navigate('/patient/login');
+      navigate('/nurse/login');
     } catch (error) {
       console.error('Signup failed:', error);
       alert(error.response?.data?.message || 'Signup failed. Please try again.');
@@ -75,7 +75,6 @@ const PatientSignup = () => {
               className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              autoComplete='true'
               required
             />
           </div>
@@ -121,7 +120,7 @@ const PatientSignup = () => {
                 className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                autoComplete='false'
+                autoComplete='off'
                 required
               />
             </div>
@@ -135,7 +134,7 @@ const PatientSignup = () => {
                 className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                autoComplete='false'
+                autoComplete='off'
                 required
               />
             </div>
@@ -155,4 +154,4 @@ const PatientSignup = () => {
   )
 }
 
-export default PatientSignup
+export default NurseSignup
