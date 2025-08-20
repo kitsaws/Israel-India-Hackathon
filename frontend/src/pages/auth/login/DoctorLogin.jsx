@@ -25,7 +25,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/login/patient`, {
+      const response = await axios.post(`http://localhost:3000/api/auth/login/nurse`, {
         username: formData.username,
         password: formData.password,
       },{ withCredentials: true });
