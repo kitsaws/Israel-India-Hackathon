@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 const Home = () => {
   const { date, time } = useClock();
   const { auth } = useAuth();
-  const user = auth.user.user;
+  const user = auth.user;
   useEffect(() => {
     console.log(user);
     console.log(user.name);
