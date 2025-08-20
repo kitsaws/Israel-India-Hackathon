@@ -23,8 +23,8 @@ const PatientLayout = ({ children }) => {
     return (
         <div className='min-h-0 max-h-screen app-container flex flex-col bg-bg'>
             <NavBar />
-            <main className='h-[80vh] w-full flex-1 flex'>
-                <div className='min-h-0 w-[80%] overflow-y-auto'>
+            <main className='h-[80vh] w-full flex'>
+                <div className='min-h-0 h-full w-[80%] overflow-y-auto'>
                     {children}
                 </div>
                 <EmergencySidebar />

@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { House, Heart, Settings, MessageSquare, Target } from 'lucide-react';
 import NavbarTiles from '../ui/NavbarTiles';
-import hospitalLogo from '../../assets/hospital-logo.png';
+import Logo from '../../assets/ventibridge.png';
 
 function Navbar() {
   return (
@@ -16,17 +16,7 @@ function Navbar() {
         )}
       </NavLink>
 
-      <NavLink to="/patient/media">
-        {({ isActive }) => (
-          <NavbarTiles
-            name="Media"
-            logo={<Heart />}
-            className={isActive ? "bg-primary-active" : ""}
-          />
-        )}
-      </NavLink>
-
-      <NavLink to="/patient/comfort-control">
+      {/* <NavLink to="/patient/comfort-control">
         {({ isActive }) => (
           <NavbarTiles
             name="Comfort"
@@ -34,7 +24,7 @@ function Navbar() {
             className={isActive ? "bg-primary-active" : ""}
           />
         )}
-      </NavLink>
+      </NavLink> */}
 
       <NavLink to="/patient/family">
         {({ isActive }) => (
@@ -55,8 +45,19 @@ function Navbar() {
           />
         )}
       </NavLink>
+
+      <NavLink to="/patient/media">
+        {({ isActive }) => (
+          <NavbarTiles
+            name="Media"
+            logo={<Heart />}
+            className={isActive ? "bg-primary-active" : ""}
+          />
+        )}
+      </NavLink>
+
       <NavLink to="/patient/home" end>
-        <img id='logo' src={hospitalLogo} />
+        <img id='logo' src={Logo} />
       </NavLink>
     </nav>
   );

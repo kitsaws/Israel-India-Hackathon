@@ -32,7 +32,7 @@ familySchema.methods.addPatient = async function (patient) {
     await this.save()
 };
     
-familySchema.method.addContact = async function (cont){
+familySchema.methods.addContact = async function (cont){
     this.contact = cont
     await this.save()
 }

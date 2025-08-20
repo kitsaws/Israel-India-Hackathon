@@ -2,8 +2,12 @@
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) return next();
+  // If this is an API route, return JSON instead of redirecting
+  if (String(req.originalUrl || '').startsWith('/api')) {
+    return res.status(401).json({ success: false, message: 'Not authenticated' });
+  }
   req.flash('error', 'You must be signed in first!');
-  return res.redirect('/login'); // or wherever your login page is
+  return res.redirect('/login');
 }
 
 function isPatient(req, res, next) {

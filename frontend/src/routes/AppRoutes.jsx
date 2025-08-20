@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, Navigate, useParams } from 'react-router-dom'
-// import RoleSelection from '../pages/auth/RoleSelection'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import RoleSelection1 from '../pages/auth/RoleSelection1'
-import { useRole } from '../context/RoleContext'
 
 import LoginPage from '../pages/auth/LoginPage'
 import SignupPage from '../pages/auth/SignupPage'
 
-import PatientLogin from '../pages/auth/login/PatientLogin'
-import PatientSignup from '../pages/auth/signup/PatientSignup'
 import Home from '../pages/patient/Home'
 import ComfortControl from '../pages/patient/ComfortControl'
 import Media from '../pages/patient/Media'
@@ -28,46 +24,13 @@ const AppRoutes = () => {
 
         {/* Protected Role-based Routes */}
         {/* Patient Routes */}
-        <Route
-            path='/patient/home'
-            element={
-                <PrivateRoutes role='patient'>
-                    <Home />
-                </PrivateRoutes>
-            }
-         />
-        <Route
-            path='/patient/comfort-control'
-            element={
-                <PrivateRoutes role='patient'>
-                    <ComfortControl />
-                </PrivateRoutes>
-            }
-         />
-        <Route
-            path='/patient/media'
-            element={
-                <PrivateRoutes role='patient'>
-                    <Media />
-                </PrivateRoutes>
-            }
-         />
-        <Route
-            path='/patient/family'
-            element={
-                <PrivateRoutes role='patient'>
-                    <Family />
-                </PrivateRoutes>
-            }
-         />
-        <Route
-            path='/patient/goals'
-            element={
-                <PrivateRoutes role='patient'>
-                    <Goals />
-                </PrivateRoutes>
-            }
-         />
+        <Route path='/patient' element={ <PrivateRoutes /> }>
+            <Route path='home' element={<Home />} />
+            <Route path='comfort-contorl' element={<ComfortControl />} />
+            <Route path='media' element={<Media />} />
+            <Route path='family' element={<Family />} />
+            <Route path='goals' element={<Goals />} />
+        </Route>
     </Routes>
   )
 }

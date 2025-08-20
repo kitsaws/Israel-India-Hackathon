@@ -4,15 +4,23 @@ import { Heart, Clock } from 'lucide-react'
 import useClock from '../../hooks/useClock'
 import PatientLayout from '../../layouts/PatientLayout'
 import { useAuth } from '../../context/AuthContext'
+import { useEffect } from 'react'
 
 const Home = () => {
   const { date, time } = useClock();
   const { auth } = useAuth();
-  const user = auth.user;
+  const user = auth.user.user;
+  useEffect(() => {
+    console.log(user);
+    console.log(user.name);
+  }, [user])
+
+  const goals = user.goals
+  const completedGoals = goals.filter(goal => goal.isCompleted);
 
   return (
     <PatientLayout>
-      <div className='py-8   px-26 flex flex-col gap-5 justify-center items-center'>
+      <div className='py-8 px-26 flex flex-col gap-10 justify-center items-center'>
         {/* welcome msg */}
         <div id="welcome-message" className='flex flex-col justify-center items-center gap-1'>
           <h2 className='text-4xl font-bold'>Welcome, {user.name}</h2>
@@ -28,7 +36,7 @@ const Home = () => {
         <div id='highlights' className='flex flex-col justify-around items-center'>
           <h3 className='text-2xl font-bold'>Today's Highlights</h3>
           <div className='flex justify-around items-center'>
-            <HomePageCard logo={'3/4'} title={''} description={'Goals Completed'} isBordered={false} />
+            <HomePageCard logo={`${completedGoals.length}/${goals.length}`} title={''} description={'Goals Completed'} isBordered={false} />
             <HomePageCard logo={'2'} title={''} description={'Family Calls'} isBordered={false} />
             <HomePageCard logo={'45 min'} title={''} description={'Relaxation Time'} isBordered={false} />
           </div>
