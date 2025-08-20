@@ -10,6 +10,7 @@ const alertSchema = new Schema({
 });
 
 const goalSchema = new Schema({
+    title : { type : String , default : null },
     description: { type: String, required: true },
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
