@@ -49,7 +49,7 @@ const PatientSignup = () => {
         confirmPassword: ''
       });
       
-      navigate('/patients/login');
+      navigate('/patient/login');
     } catch (error) {
       console.error('Signup failed:', error);
       alert(error.response?.data?.message || 'Signup failed. Please try again.');

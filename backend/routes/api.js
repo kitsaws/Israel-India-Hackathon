@@ -11,7 +11,6 @@ const Nurse = require(path.join(__dirname,'..','models','nurse'));
 const Family = require(path.join(__dirname,'..','models','family'));
 
 const {isPatient} = require(path.join(__dirname,'..','middlewares'));
-const {isNurse} = require(path.join(__dirname,'..','middlewares'));
 
 const {isLoggedIn} = require(path.join(__dirname,'..','middlewares'));
 
@@ -21,7 +20,6 @@ const models = require(path.join(__dirname,'..','utils','mapModel'));
 
 
 
-// #region middlewares
 const passAuth = (req, res, next) => {
   const { role } = req.params;
 
@@ -29,42 +27,32 @@ const passAuth = (req, res, next) => {
     return res.status(400).json({ success: false, message: "Invalid Role" });
   }
 
-  // run passport auth properly
-  return passport.authenticate(`${role}-local`,{session:true})(req, res, next);
+  return passport.authenticate(`${role}-local`, { session: true })(req, res, next);
 };
 // #endregion
 
 
 
 
-// #region ROLE VERIFICATION
 router.get('/:role/me',isLoggedIn,async(req,res)=>{
     try{
-      const {role}=req.params;
-
-      if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
-        return res.status(400).json({ success: false, message: "Invalid role" });
+      const roleFromSession = req.session.role || (req.user && req.user.constructor && req.user.constructor.modelName);
+      if(!req.user || !roleFromSession){
+        return res.status(401).json({ success: false, message: "Not authenticated" });
       }
 
-      if(!req.user){
-        return res.status(400).json({ success: false, message: "Auth failed" });
-      }
-
-      const Model=models[role.toLowerCase()]
+      const role = String(roleFromSession).toLowerCase();
+      const Model = models[role];
       if(!Model){
         return res.status(400).json({ success: false, message: "Invalid role" });
       }
 
-      const user=await Model.findById(req.user._id);
+      const user = await Model.findById(req.user._id);
       if(!user){
         return res.status(400).json({ success: false, message: "User not found" });
       }
 
-      return res.json({
-        success: true,
-        user,
-        role
-      });
+      return res.json({ success: true, user, role });
       
     }catch(err){
       res.status(500).json({success: false, message: "Error fetching profile"});
@@ -95,27 +83,27 @@ router.post('/auth/signup/patient',async(req,res)=>{
     }
 })
 
-router.post('/auth/signup/nurse',async(req,res)=>{
-  try {
-      const {fullName:name,password} = req.body
-      const username = name.toLowerCase().replace(/\s+/g, '.')
-      const newNurse = new Nurse({
-          name,
-          username
-      })
-      await Nurse.register(newNurse,password)
-      console.log(`Created nursse: ${name} | username: ${username} | password: ${password}`);
-      return res.json({'success':true})
-  }catch(err){
-      console.log(err)
-      return res.send(err)
-  }
-})
-// #endregion
+// router.post('/auth/patients/check', 
+//   passport.authenticate('patient-local', { session: false }), // Disable session if API-based
+//   async (req, res) => {
+//     try {
+//       // If authentication is successful, get user data
+//       const user = await Patient.findById(req.user._id);
 
+//       if (!user) {
+//         // If no user is found, send failure
+//         return res.json({ success: false, message: 'User not found' });
+//       }
 
+//       // Send success and user data
+//       return res.json({ success: true, user });
+//     } catch (error) {
+//       // In case there's an error in fetching user data
+//       return res.status(500).json({ success: false, message: 'Error fetching user data' });
+//     }
+//   }
+// );
 
-// #region NOT USED
 router.get('/auth/:role/check',passAuth,async (req, res) => {
     try {
       const {role}=req.params;
@@ -146,14 +134,36 @@ router.get('/auth/:role/check',passAuth,async (req, res) => {
     }
   }
 );
-// #endregion
 
 
+// router.post('/auth/login/patient', 
+//   passport.authenticate('patient-local', { failureRedirect: '/patient/login' }),
+//   async (req, res) => {
+//     const id = req.user._id;
+//     console.log(id);
+    
+//     const patient = await Patient.findById(id);
+//     console.log(patient);
+    
 
+//     req.login(req.user, (err) => {
+//       if (err) {
+//         // login again
+//         return res.status(501).json(err)
+//       }
+      
+//       // Now the session is established, and you can proceed
+//       return res.json(patient)
+//     });
+//   }
+// );
 
-// #region LOGIN ROUTE
 router.post('/auth/login/:role',passAuth,async (req, res) => {
     const {role} = req.params;
+    if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
+      return res.status(400).json({ success: false, message: "Invalid role" });
+    }
+    
     const Model = models[role.toLowerCase()];
     if(!Model){
       return res.status(400).json({ success: false, message: "Invalid role" });
@@ -172,6 +182,7 @@ router.post('/auth/login/:role',passAuth,async (req, res) => {
       }
       
       // Now the session is established, and you can proceed
+      req.session.role = role;
       return res.json({
         success: true,
         user,
