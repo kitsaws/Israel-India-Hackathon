@@ -1,3 +1,5 @@
+
+// #region REQUIREMENTS
 const path = require('path')
 const express = require('express');
 const passport = require('passport')
@@ -9,11 +11,15 @@ const Nurse = require(path.join(__dirname,'..','models','nurse'));
 const Family = require(path.join(__dirname,'..','models','family'));
 
 const {isPatient} = require(path.join(__dirname,'..','middlewares'));
+
 const {isLoggedIn} = require(path.join(__dirname,'..','middlewares'));
 
 const models = require(path.join(__dirname,'..','utils','mapModel'));
+// #end region
 
-// Passport authenticate helper for login only
+
+
+
 const passAuth = (req, res, next) => {
   const { role } = req.params;
 
@@ -23,15 +29,12 @@ const passAuth = (req, res, next) => {
 
   return passport.authenticate(`${role}-local`, { session: true })(req, res, next);
 };
+// #endregion
 
-// router.get('/patients/me',isPatient,async(req,res)=>{
-//     const id = req.user._id
-//     const patient = await Patient.findById(id)
-//     res.json(patient)
-// })
 
-// Session-based auth check
-router.get('/auth/me', isLoggedIn, async (req, res) => {
+
+
+router.get('/:role/me',isLoggedIn,async(req,res)=>{
     try{
       const roleFromSession = req.session.role || (req.user && req.user.constructor && req.user.constructor.modelName);
       if(!req.user || !roleFromSession){
@@ -55,7 +58,11 @@ router.get('/auth/me', isLoggedIn, async (req, res) => {
       res.status(500).json({success: false, message: "Error fetching profile"});
     }
 })
+// #endregion
 
+
+
+// #region SIGNUP ROUTES
 router.post('/auth/signup/patient',async(req,res)=>{
     try {
         const {fullName:name,age,gender,password} = req.body
@@ -97,27 +104,36 @@ router.post('/auth/signup/patient',async(req,res)=>{
 //   }
 // );
 
-// Remove LocalStrategy from auth checks; checks should be session-only via /auth/me
-// Keeping the old route but making it session-based for compatibility
-router.get('/auth/:role/check', isLoggedIn, async (req, res) => {
-  try {
-    const { role } = req.params;
-    if(!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
-      return res.status(400).json({ success: false, message: "Invalid role" });
+router.get('/auth/:role/check',passAuth,async (req, res) => {
+    try {
+      const {role}=req.params;
+      const Model = models[role.toLowerCase()];
+
+      if(!Model){
+        return res.status(400).json({ success: false, message: "Invalid role" });
+      }
+
+      if(!req.user){
+        return res.json({success: false,message: "Auth failed"});
+      }
+
+      const user=await Model.findById(req.user._id);
+      if(!user){
+        return res.status(400).json({ success: false, message: "User not found" });
+      }
+
+      return res.json({
+        success: true,
+        user,
+        role
+      });
+      
+    } catch (error) {
+      // In case there's an error in fetching user data
+      return res.status(500).json({ success: false, message: 'Error fetching user data' });
     }
-    const Model = models[role.toLowerCase()];
-    if(!Model){
-      return res.status(400).json({ success: false, message: "Invalid role" });
-    }
-    const user = await Model.findById(req.user._id);
-    if(!user){
-      return res.status(400).json({ success: false, message: "User not found" });
-    }
-    return res.json({ success: true, user, role: role.toLowerCase() });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: 'Error fetching user data' });
   }
-});
+);
 
 
 // router.post('/auth/login/patient', 
@@ -175,6 +191,38 @@ router.post('/auth/login/:role',passAuth,async (req, res) => {
     });
   }
 );
+// #endregion
+
+
+
+
+
+
+// #region Nurse dash routes
+router.post('/nurses/:id/setGoal', async (req,res)=>{
+  const {description,title} = req.body;
+  const {id} = req.params
+
+  // find the nurse with that id
+  const nurse = await Nurse.findById(id)
+  const goals = await nurse.setGoal(title,description)
+
+  return res.json(goals)
+})
+
+router.post('/nurses/:n_id/assignPatient/:p_id',async (req,res)=>{
+  const {n_id,p_id} = req.params
+  // find the nurse with that id
+  const nurse = await Nurse.findById(n_id)
+  const patient = await nurse.assignPatient(p_id)
+  return res.json(patient)
+})
+// #endregion
+
+
+
+
+
 
 
 module.exports = router;

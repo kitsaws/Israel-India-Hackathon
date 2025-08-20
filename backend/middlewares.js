@@ -18,6 +18,14 @@ function isPatient(req, res, next) {
   return res.redirect('/');
 }
 
+function isNurse(req, res, next) {
+  if (req.isAuthenticated() && req.user.constructor.modelName === 'Nurse') {
+    return next();
+  }
+  req.flash('error', 'Access denied: Nurses only');
+  return res.redirect('/');
+}
+
 function isFamily(req, res, next) {
   if (req.isAuthenticated() && req.user.constructor.modelName === 'Family') {
     return next();
@@ -86,5 +94,6 @@ module.exports = {
   isPatient,
   isDoctor,
   isFamily,
-  mergedLogger
+  mergedLogger,
+  isNurse
 };

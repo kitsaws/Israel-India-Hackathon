@@ -1,11 +1,12 @@
+
 const path = require('path')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
 const Patient = require(path.join(__dirname,'patient'))
-
 const plm = require('passport-local-mongoose')
 
+
+// #region NURSE-SCHEMA
 const nurseSchema = new Schema({
     name : {
         type : String
@@ -21,7 +22,10 @@ const nurseSchema = new Schema({
         default : undefined
     }
 })
+// #endregion
 
+
+// #region SCHEMA-METHODS
 // Schema method to assign a patient
 nurseSchema.methods.assignPatient = async function (patientId) {
   this.patient = patientId;
@@ -35,13 +39,13 @@ nurseSchema.methods.assignDoctor = async function (doctorId) {
 };
 
 // Add goal
-nurseSchema.methods.setGoal = async function (description) {
+nurseSchema.methods.setGoal = async function (title,description) {
   if (!this.patient) throw new Error("No patient assigned to this nurse");
 
   const patient = await Patient.findById(this.patient);
   if (!patient) throw new Error("Patient not found");
 
-  patient.goals.push({ description });
+  patient.goals.push({ title, description });
   await patient.save();
 
   return patient.goals;
@@ -75,7 +79,12 @@ nurseSchema.methods.removeGoal = async function (goalId) {
   await patient.save();
   return patient.goals;
 };
+// #endregion
+
+
+
+
 
 nurseSchema.plugin(plm)
-
 module.exports = mongoose.model('Nurse',nurseSchema)
+
