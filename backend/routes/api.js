@@ -1,3 +1,5 @@
+
+// #region REQUIREMENTS
 const path = require('path')
 const express = require('express');
 const passport = require('passport')
@@ -9,11 +11,17 @@ const Nurse = require(path.join(__dirname,'..','models','nurse'));
 const Family = require(path.join(__dirname,'..','models','family'));
 
 const {isPatient} = require(path.join(__dirname,'..','middlewares'));
+const {isNurse} = require(path.join(__dirname,'..','middlewares'));
 
 const {isLoggedIn} = require(path.join(__dirname,'..','middlewares'));
 
 const models = require(path.join(__dirname,'..','utils','mapModel'));
+// #end region
 
+
+
+
+// #region middlewares
 const passAuth = (req, res, next) => {
   const { role } = req.params;
 
@@ -24,13 +32,12 @@ const passAuth = (req, res, next) => {
   // run passport auth properly
   return passport.authenticate(`${role}-local`,{session:true})(req, res, next);
 };
+// #endregion
 
-// router.get('/patients/me',isPatient,async(req,res)=>{
-//     const id = req.user._id
-//     const patient = await Patient.findById(id)
-//     res.json(patient)
-// })
 
+
+
+// #region ROLE VERIFICATION
 router.get('/:role/me',isLoggedIn,async(req,res)=>{
     try{
       const {role}=req.params;
@@ -63,7 +70,11 @@ router.get('/:role/me',isLoggedIn,async(req,res)=>{
       res.status(500).json({success: false, message: "Error fetching profile"});
     }
 })
+// #endregion
 
+
+
+// #region SIGNUP ROUTES
 router.post('/auth/signup/patient',async(req,res)=>{
     try {
         const {fullName:name,age,gender,password} = req.body
@@ -84,27 +95,27 @@ router.post('/auth/signup/patient',async(req,res)=>{
     }
 })
 
-// router.post('/auth/patients/check', 
-//   passport.authenticate('patient-local', { session: false }), // Disable session if API-based
-//   async (req, res) => {
-//     try {
-//       // If authentication is successful, get user data
-//       const user = await Patient.findById(req.user._id);
+router.post('/auth/signup/nurse',async(req,res)=>{
+  try {
+      const {fullName:name,password} = req.body
+      const username = name.toLowerCase().replace(/\s+/g, '.')
+      const newNurse = new Nurse({
+          name,
+          username
+      })
+      await Nurse.register(newNurse,password)
+      console.log(`Created nursse: ${name} | username: ${username} | password: ${password}`);
+      return res.json({'success':true})
+  }catch(err){
+      console.log(err)
+      return res.send(err)
+  }
+})
+// #endregion
 
-//       if (!user) {
-//         // If no user is found, send failure
-//         return res.json({ success: false, message: 'User not found' });
-//       }
 
-//       // Send success and user data
-//       return res.json({ success: true, user });
-//     } catch (error) {
-//       // In case there's an error in fetching user data
-//       return res.status(500).json({ success: false, message: 'Error fetching user data' });
-//     }
-//   }
-// );
 
+// #region NOT USED
 router.get('/auth/:role/check',passAuth,async (req, res) => {
     try {
       const {role}=req.params;
@@ -135,30 +146,12 @@ router.get('/auth/:role/check',passAuth,async (req, res) => {
     }
   }
 );
+// #endregion
 
 
-// router.post('/auth/login/patient', 
-//   passport.authenticate('patient-local', { failureRedirect: '/patient/login' }),
-//   async (req, res) => {
-//     const id = req.user._id;
-//     console.log(id);
-    
-//     const patient = await Patient.findById(id);
-//     console.log(patient);
-    
 
-//     req.login(req.user, (err) => {
-//       if (err) {
-//         // login again
-//         return res.status(501).json(err)
-//       }
-      
-//       // Now the session is established, and you can proceed
-//       return res.json(patient)
-//     });
-//   }
-// );
 
+// #region LOGIN ROUTE
 router.post('/auth/login/:role',passAuth,async (req, res) => {
     const {role} = req.params;
     const Model = models[role.toLowerCase()];
@@ -187,6 +180,38 @@ router.post('/auth/login/:role',passAuth,async (req, res) => {
     });
   }
 );
+// #endregion
+
+
+
+
+
+
+// #region Nurse dash routes
+router.post('/nurses/:id/setGoal', async (req,res)=>{
+  const {description,title} = req.body;
+  const {id} = req.params
+
+  // find the nurse with that id
+  const nurse = await Nurse.findById(id)
+  const goals = await nurse.setGoal(title,description)
+
+  return res.json(goals)
+})
+
+router.post('/nurses/:n_id/assignPatient/:p_id',async (req,res)=>{
+  const {n_id,p_id} = req.params
+  // find the nurse with that id
+  const nurse = await Nurse.findById(n_id)
+  const patient = await nurse.assignPatient(p_id)
+  return res.json(patient)
+})
+// #endregion
+
+
+
+
+
 
 
 module.exports = router;
