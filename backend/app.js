@@ -2,6 +2,7 @@ const path = require('path')
 const cors = require('cors')
 const patientRoutes = require(path.join(__dirname,'routes','patients'))
 const apiRoutes = require(path.join(__dirname,'routes','api'))
+const callRoutes = require(path.join(__dirname,'routes','callRoutes'))
 const ApiError = require(path.join(__dirname,'utils','ApiError'))
 
 const Doctor = require(path.join(__dirname,'models','doctor'))
@@ -102,6 +103,9 @@ app.set('views',path.join(__dirname,'views'))
 
 
 app.use('/patients',patientRoutes)
+
+app.use('/api/call', callRoutes)
+
 app.use('/api',apiRoutes)
 
 
