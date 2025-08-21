@@ -43,6 +43,7 @@ const nurseSchema = new Schema({
 nurseSchema.methods.assignPatient = async function (username) {
   const patient = await Patient.findOne({username:username})
   this.patient = patient
+  await patient.assignNurse(this._id)
   return await this.save();
 };
     
