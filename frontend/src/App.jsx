@@ -1,35 +1,30 @@
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, useNavigate} from 'react-router-dom'
 import './App.css'
 import AppRoutes from './routes/AppRoutes'
 import { useAuth } from './context/AuthContext'
-import { useRole } from './context/RoleContext'
 import { useEffect } from 'react'
+import Loading from './components/Loading'
 
 function App() {
-  const { role } = useRole()
-
   const { auth } = useAuth();
-  useEffect(() => {
-    if(!role){
-        console.log('Wait for role to be set before checking auth');
-        return;
-    }
-    console.log(`Checking authentication for role: ${role}`);
-    console.log(`Auth: ${auth}`);
-    
-    
+  const navigate = useNavigate();
+
+  useEffect(() => {    
     if (auth.loading) {
-      console.log('Loading authentication status...')
+      console.log('Loading authentication status...');
+      return <Loading />
     } else if (auth.user) {
-      console.log('User is authenticated:', auth.user)
+      console.log('User is authenticated:', auth.user);
+      navigate(`/${auth.role}/`);
     } else {
-      console.log('User is not authenticated')
+      console.log('User is not authenticated');
+      navigate(`/`);
     }
-  }, [role, auth])
+  }, [auth])
 
   return (
     <div className='min-h-screen bg-background text-text'>
-      <AppRoutes />
+      <AppRoutes user={auth.user} />
     </div>
   )
 }

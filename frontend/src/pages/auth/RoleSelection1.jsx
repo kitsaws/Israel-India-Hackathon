@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useRole } from '../../context/RoleContext'
 import Button from '../../components/auth/Button'
@@ -14,19 +13,7 @@ const roles = [
 const RoleSelection1 = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { updateRole, clearRole } = useRole();
-
-  // useEffect(() => {
-  //   const isAtRoleSelect =
-  //     location.pathname === '/role-select/login' ||
-  //     location.pathname === '/role-select/signup';
-
-  //   if (isAtRoleSelect) {
-  //     clearRole();
-  //     console.log('Role cleared on visiting role-select route');
-  //   }
-  // }, [location.pathname]);
-
+  const { updateRole } = useRole();
 
   const authType = location.pathname.includes('login') ? 'login' : 'signup';
   const handleRoleSelect = (roleId) => {
