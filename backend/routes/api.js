@@ -28,224 +28,229 @@ const middlewares = {
 };
 
 function createRouter(memoryStore) {
-  const router = express.Router();
+    const router = express.Router();
 
-  // SESSION INSPECTION ROUTE (memoryStore)
-  router.get('/nurse/sessions', (req, res) => {
-    memoryStore.all((err, sessions) => {
-      if (err) return res.status(500).send('Error retrieving sessions');
+    // SESSION INSPECTION ROUTE (memoryStore)
+    router.get('/nurse/sessions', (req, res) => {
+        memoryStore.all((err, sessions) => {
+            if (err) return res.status(500).send('Error retrieving sessions');
 
-      const parsedSessions = Object.entries(sessions).map(([sid, session]) => {
-        const s = typeof session === 'string' ? JSON.parse(session) : session;
+            const parsedSessions = Object.entries(sessions).map(([sid, session]) => {
+            const s = typeof session === 'string' ? JSON.parse(session) : session;
 
-        return {
-          sessionID: sid,
-          userID: s?.passport?.user || null,
-          cookie: s.cookie
-        };
-      });
+            return {
+                sessionID: sid,
+                userID: s?.passport?.user || null,
+                cookie: s.cookie
+            };
+            });
 
-      res.json(parsedSessions);
+            res.json(parsedSessions);
+        });
     });
-  });
 
-  // Get current logged-in user
-  router.get('/:role/me', isLoggedIn, async (req, res) => {
-    try {
-      const roleFromSession = req.session.role || (req.user && req.user.constructor && req.user.constructor.modelName);
-      if (!req.user || !roleFromSession) {
-        return res.status(401).json({ success: false, message: "Not authenticated" });
-      }
+    // Get current logged-in user
+    router.get('/:role/me', isLoggedIn, async (req, res) => {
+        try {
+            const roleFromSession = req.session.role || (req.user && req.user.constructor && req.user.constructor.modelName);
+            if (!req.user || !roleFromSession) {
+            return res.status(401).json({ success: false, message: "Not authenticated" });
+            }
 
-      const role = String(roleFromSession).toLowerCase();
-      const Model = models[role];
-      if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
+            const role = String(roleFromSession).toLowerCase();
+            const Model = models[role];
+            if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
 
-      const user = await Model.findById(req.user._id);
-      if (!user) return res.status(400).json({ success: false, message: "User not found" });
+            const user = await Model.findById(req.user._id);
+            if (!user) return res.status(400).json({ success: false, message: "User not found" });
 
-      return res.json({ success: true, user, role });
-    } catch (err) {
-      res.status(500).json({ success: false, message: "Error fetching profile" });
-    }
-  });
-
-  // Signup patient
-  router.post('/auth/signup/patient', async (req, res) => {
-    try {
-      const { fullName: name, age, gender, password, telephone } = req.body;
-      const username = name.toLowerCase().replace(/\s+/g, '.');
-      const newPatient = new Patient({
-        name,
-        age,
-        username,
-        gender,
-        telephone,
-        family: []
-      });
-      await Patient.register(newPatient, password);
-      console.log(`Created patient: ${name} | username: ${username} | password: ${password}`);
-      return res.json({ success: true });
-    } catch (err) {
-      console.log(err);
-      return res.send(err);
-    }
-  });
-
-  // Signup nurse
-  router.post('/auth/signup/nurse', async (req, res) => {
-    try {
-      const { fullName: name, age, gender, password, telephone } = req.body;
-      const username = name.toLowerCase().replace(/\s+/g, '.');
-      const newNurse = new Nurse({
-        name,
-        age,
-        username,
-        gender,
-        telephone
-      });
-      await Nurse.register(newNurse, password);
-      console.log(`Created nurse: ${name} | username: ${username} | password: ${password}`);
-      return res.json({ success: true });
-    } catch (err) {
-      console.log(err);
-      return res.send(err);
-    }
-  });
-
-  // Auth check
-  router.get('/auth/:role/check', passAuth, async (req, res) => {
-    try {
-      const { role } = req.params;
-      const Model = models[role.toLowerCase()];
-      if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
-      if (!req.user) return res.json({ success: false, message: "Auth failed" });
-
-      const user = await Model.findById(req.user._id);
-      if (!user) return res.status(400).json({ success: false, message: "User not found" });
-
-      return res.json({ success: true, user, role });
-    } catch (error) {
-      return res.status(500).json({ success: false, message: 'Error fetching user data' });
-    }
-  });
-
-  // Login handler
-  router.post('/auth/login/:role', passAuth, async (req, res) => {
-    const { role } = req.params;
-    if (!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
-      return res.status(400).json({ success: false, message: "Invalid role" });
-    }
-
-    const Model = models[role.toLowerCase()];
-    if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
-
-    const user = await Model.findById(req.user._id);
-    if (!user) return res.status(400).json({ success: false, message: "User not found" });
-
-    console.log(user);
-
-    req.login(req.user, (err) => {
-      if (err) return res.status(501).json(err);
-      req.session.role = role;
-      return res.json({ success: true, user, role });
+            return res.json({ success: true, user, role });
+        } catch (err) {
+            res.status(500).json({ success: false, message: "Error fetching profile" });
+        }
     });
-  });
 
-  // Logout
-  router.post('/auth/logout', (req, res, next) => {
-    req.logout(function(err) {
-      if (err) return next(err);
+    // Signup patient
+    router.post('/auth/signup/patient', async (req, res) => {
+        try {
+            const { fullName: name, age, gender, password, telephone } = req.body;
+            const username = name.toLowerCase().replace(/\s+/g, '.');
+            const newPatient = new Patient({
+            name,
+            age,
+            username,
+            gender,
+            telephone,
+            family: []
+            });
+            await Patient.register(newPatient, password);
+            console.log(`Created patient: ${name} | username: ${username} | password: ${password}`);
+            return res.json({ success: true });
+        } catch (err) {
+            console.log(err);
+            return res.send(err);
+        }
+    });
 
-      req.session.destroy(err => {
-        if (err) {
-          return res.status(500).json({ success: false, message: 'Could not log out, please try again.' });
+    // Signup nurse
+    router.post('/auth/signup/nurse', async (req, res) => {
+        try {
+            const { fullName: name, age, gender, password, telephone } = req.body;
+            const username = name.toLowerCase().replace(/\s+/g, '.');
+            const newNurse = new Nurse({
+            name,
+            age,
+            username,
+            gender,
+            telephone
+            });
+            await Nurse.register(newNurse, password);
+            console.log(`Created nurse: ${name} | username: ${username} | password: ${password}`);
+            return res.json({ success: true });
+        } catch (err) {
+            console.log(err);
+            return res.send(err);
+        }
+    });
+
+    // Auth check
+    router.get('/auth/:role/check', passAuth, async (req, res) => {
+        try {
+            const { role } = req.params;
+            const Model = models[role.toLowerCase()];
+            if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
+            if (!req.user) return res.json({ success: false, message: "Auth failed" });
+
+            const user = await Model.findById(req.user._id);
+            if (!user) return res.status(400).json({ success: false, message: "User not found" });
+
+            return res.json({ success: true, user, role });
+        } catch (error) {
+            return res.status(500).json({ success: false, message: 'Error fetching user data' });
+        }
+    });
+
+    // Login handler
+    router.post('/auth/login/:role', passAuth, async (req, res) => {
+        const { role } = req.params;
+        if (!['patient', 'doctor', 'nurse', 'family'].includes(role)) {
+            return res.status(400).json({ success: false, message: "Invalid role" });
         }
 
-        res.clearCookie('connect.sid');
-        return res.json({ success: true, message: "Logged out successfully" });
-      });
+        const Model = models[role.toLowerCase()];
+        if (!Model) return res.status(400).json({ success: false, message: "Invalid role" });
+
+        const user = await Model.findById(req.user._id);
+        if (!user) return res.status(400).json({ success: false, message: "User not found" });
+
+        console.log(user);
+
+        req.login(req.user, (err) => {
+            if (err) return res.status(501).json(err);
+            req.session.role = role;
+            return res.json({ success: true, user, role });
+        });
     });
-  });
 
-  // Nurse dash routes
-  router.post('/nurse/set-goal', async (req, res) => {
-    console.log('************ set-goal nurse dash ******************');
-    console.log(req.user);
-    const { description, title } = req.body;
+    // Logout
+    router.post('/auth/logout', (req, res, next) => {
+        req.logout(function(err) {
+            if (err) return next(err);
 
-    const nurse = await Nurse.findById(req.user._id);
-    const goals = await nurse.setGoal(title, description);
+            req.session.destroy(err => {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'Could not log out, please try again.' });
+            }
 
-    return res.json(goals);
-  });
+            res.clearCookie('connect.sid');
+            return res.json({ success: true, message: "Logged out successfully" });
+            });
+        });
+    });
 
-  router.post('/nurse/assign-patient', async (req, res) => {
-    console.log('************ assign-patient nurse dash ******************');
-    console.log(req.user);
+    // Nurse dash routes
+    router.post('/nurse/set-goal', async (req, res) => {
+        console.log('************ set-goal nurse dash ******************');
+        console.log(req.user);
+        const { description, title } = req.body;
 
-    const nurse = await Nurse.findById(req.user._id);
-    const { username } = req.body;
-    await nurse.assignPatient(username);
-    return res.json({ success: true });
-  });
+        const nurse = await Nurse.findById(req.user._id);
+        const goals = await nurse.setGoal(title, description);
 
-  router.get('/nurse/get-patient',async(req,res)=>{
-    console.log('************ set-patient nurse dash ******************');
-    console.log(req.user);
+        return res.json(goals);
+        });
+    
+    // Assign Patient To Nurse
+    router.post('/nurse/assign-patient', async (req, res) => {
+        console.log('************ assign-patient nurse dash ******************');
+        console.log(req.user);
 
-    const nurse = await Nurse.findById(req.user._id);
-    if(!nurse){
-        return res.status(404).json({ success: false, message: 'Nurse not found' });
-    }
+        const nurse = await Nurse.findById(req.user._id);
+        const { username } = req.body;
+        await nurse.assignPatient(username);
+        return res.json({ success: true });
+    });
 
-    if(!nurse.patient){
-        return res.status(400).json({ success: false, message: 'No patient assigned to this nurse' });
-    }
+    //Nurse Can Edit Patient's Details
+    router.get('/nurse/get-patient',async(req,res)=>{
+        console.log('************ set-patient nurse dash ******************');
+        console.log(req.user);
 
-    const patient = await Patient.findById(nurse.patient);
-    if(!patient){
-        return res.status(404).json({ success: false, message: 'Patient not found' });
-    }
+        const nurse = await Nurse.findById(req.user._id);
+        if(!nurse){
+            return res.status(404).json({ success: false, message: 'Nurse not found' });
+        }
 
-    return res.json({ success: true, patient });
-  })
+        if(!nurse.patient){
+            return res.status(40).json({ success: false, message: 'No patient assigned to this nurse' });
+        }
 
-  router.post('/nurse/patient/edit',async(req,res)=>{
-    const {username, name, age, gender, room, telephone}=req.body;
+        const patient = await Patient.findById(nurse.patient);
+        if(!patient){
+            return res.status(404).json({ success: false, message: 'Patient not found' });
+        }
 
-    const patient=await Patient.findOne({ username });
-    if(!patient){
-        return res.status(400).json({success: false,messgae:"Patient Not Found"});
-    }
+        return res.json({ success: true, patient });
+    })
 
-    patient.name=name;
-    patient.age=age;
-    patient.gender=gender;
-    patient.room=room;
-    patient.telephone=telephone;
+    //Nurse Can Edit Patient's Details
+    router.post('/nurse/patient/edit',async(req,res)=>{
+        const {username, name, age, gender, room, telephone}=req.body;
 
-    await patient.save();
-    return res.json({ success: true, patient });
-  })
+        const patient=await Patient.findOne({ username });
+        if(!patient){
+            return res.status(400).json({success: false,messgae:"Patient Not Found"});
+        }
 
-  router.post('/nurse/patient/family/edit',async(req,res)=>{
-    const {username,familyId,newTelephone}=req.body;
+        patient.name=name;
+        patient.age=age;
+        patient.gender=gender;
+        patient.room=room;
+        patient.telephone=telephone;
 
-    const patient=await Patient.findOne({ username }).populate('family');
-    if(!patient){
-        return res.status(400).json({success: false,messgae:"Patient Not Found"});
-    }
+        await patient.save();
+        return res.json({ success: true, patient });
+    })
 
-    const familyMember=patient.family.find(familyMem=>familyMem._id.toString()===familyId);
+    //Nurse Can Edit Patient's Family Details
+    router.post('/nurse/patient/family/edit',async(req,res)=>{
+        const {username,familyId,newTelephone}=req.body;
 
-    familyMember.contact=newTelephone;
-    await familyMember.save();
+        const patient=await Patient.findOne({ username }).populate('family');
+        if(!patient){
+            return res.status(400).json({success: false,messgae:"Patient Not Found"});
+        }
 
-    return res.json({ success: true, familyMember });
-  })
+        const familyMember=patient.family.find(familyMem=>familyMem._id.toString()===familyId);
 
-  router.post('/nurse/patient/family/delete',async(req,res)=>{
+        familyMember.contact=newTelephone;
+        await familyMember.save();
+
+        return res.json({ success: true, familyMember });
+    })
+
+    //Nurse can delete the entry of family from patient
+    router.post('/nurse/patient/family/delete',async(req,res)=>{
     const {username,familyId}=req.body;
 
     const patient=await Patient.findOne({ username });
@@ -258,10 +263,67 @@ function createRouter(memoryStore) {
     await patient.save();
 
     return res.json({ success: true, patient });
-  })
+    })
 
+    //Logout a specific patient session by SID
+    router.post('/nurse/patient/logout', async (req, res) => {
+        try {
+            const nurse = await Nurse.findById(req.user._id).populate('patient');
+
+            const patientId = nurse.patient._id.toString();
+
+            memoryStore.all((err, sessions) => {
+                if (err) {
+                    console.error("Error accessing session store:", err);
+                    return res.status(500).json({ success: false, message: "Session store error" });
+                }
+
+                let sessionFound = false;
+
+                for (const [sessionID, sessionData] of Object.entries(sessions)) {
+                    const parsed = typeof sessionData === 'string' ? JSON.parse(sessionData) : sessionData;
+
+                    if (
+                        parsed.passport &&
+                        parsed.passport.user &&
+                        parsed.passport.user.id === patientId
+                    ) {
+                        memoryStore.destroy(sessionID, (err) => {
+                            if (err) {
+                                console.error("Error destroying session:", err);
+                                return res.status(500).json({ success: false, message: "Failed to log out patient" });
+                            }
+
+                            sessionFound = true;
+                            return res.json({
+                                success: true,
+                                message: `User (${nurse.patient.name}) logged out successfully.`,
+                                redirect: 'http://localhost:5173/'
+                            });
+                        });
+
+                        return; // Exit the loop once session is destroyed
+                    }
+                }
+
+                if (!sessionFound) {
+                    return res.status(404).json({
+                        success: false,
+                        message: `No active session found for User (${nurse.patient.name})`,
+                    });
+                }
+            });
+        } catch (error) {
+            console.error("Logout error:", error);
+            return res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    });
 
   return router;
 }
 
 module.exports = { createRouter,...middlewares };
+
+
+
+
