@@ -202,7 +202,7 @@ function createRouter(memoryStore) {
         }
 
         if(!nurse.patient){
-            return res.status(40).json({ success: false, message: 'No patient assigned to this nurse' });
+            return res.status(400).json({ success: false, message: 'No patient assigned to this nurse' });
         }
 
         const patient = await Patient.findById(nurse.patient);
