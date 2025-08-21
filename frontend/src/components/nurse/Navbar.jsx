@@ -14,7 +14,7 @@ const NavbarButton = ({ logo, text, activeClass }) => {
     );
 }
 
-const Navbar = () => {
+const Navbar = () => { 
     const navigate = useNavigate();
     const { setAuth } = useAuth();
 
