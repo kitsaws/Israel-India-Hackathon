@@ -1,6 +1,8 @@
 import NurseLayout from '../../layouts/NurseLayout'
 import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { usePatient } from '../../context/nurse/PatientContext'
+import Loading from '../../components/Loading'
 import axios from 'axios'
 
 const PageHeader = ({ handleEditPatient, handlePatientLogout }) => {
@@ -111,7 +113,7 @@ const CurrentVitals = ({ vitals }) => {
     )
   }
   return (
-    <div className="currentVitals col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-100 shadow-md flex flex-col gap-4">
+    <div className="currentVitals col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
         <span className='text-green-400'><TrendingUp /></span>
         <span className='text-xl font-semibold'>Current Vitals</span>
@@ -156,33 +158,42 @@ const FamilyMembers = ({ family }) => {
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
+  const {patient} = usePatient();
 
-  const patient = {
-    name: 'John Doe',
-    age: 56,
-    gender: 'Male',
-    id: 'P001',
-    room: 'ICU-101',
-    admission: '2024-01-15',
-    condition: 'Stable',
-    family: [
-      {
-        name: 'Jane Smith',
-        relation: 'Wife',
-        phno: '+1 (555) 123-4567'
-      },
-      {
-        name: 'Mike Smith',
-        relation: 'Son',
-        phno: '+1 (555) 234-5678'
-      },
-      {
-        name: 'Lisa Johnson',
-        relation: 'Sister',
-        phno: '+1 (555) 345-6789'
-      }
-    ]
+  if (patient.loading) {
+    return <Loading />;
   }
+
+  if (!patient.data) {
+    return <div>No patient data found.</div>; // optional fallback
+  }
+
+  // const patient = {
+  //   name: 'John Doe',
+  //   age: 56,
+  //   gender: 'Male',
+  //   id: 'P001',
+  //   room: 'ICU-101',
+  //   admission: '2024-01-15',
+  //   condition: 'Stable',
+  //   family: [
+  //     {
+  //       name: 'Jane Smith',
+  //       relation: 'Wife',
+  //       phno: '+1 (555) 123-4567'
+  //     },
+  //     {
+  //       name: 'Mike Smith',
+  //       relation: 'Son',
+  //       phno: '+1 (555) 234-5678'
+  //     },
+  //     {
+  //       name: 'Lisa Johnson',
+  //       relation: 'Sister',
+  //       phno: '+1 (555) 345-6789'
+  //     }
+  //   ]
+  // }
   const emotionData = {}
   const vitals = {
     heartRate: 70,

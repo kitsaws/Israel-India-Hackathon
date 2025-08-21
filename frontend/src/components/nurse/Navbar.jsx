@@ -26,6 +26,8 @@ const Navbar = () => {
                 { withCredentials: true }
             );
 
+            console.log('Nurse Logout Successful');
+            
             setAuth({ loading: true, user: null, role: null });
             navigate('/role-select/login');
         } catch (err) {
