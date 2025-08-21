@@ -15,30 +15,32 @@ import Profile from '../pages/nurse/Profile'
 import PatientDashboard from '../pages/nurse/PatientDashboard'
 import PatientGoals from '../pages/nurse/PatientGoals'
 
-const AppRoutes = () => {    
+const AppRoutes = () => {
   return (
     <Routes>
-        <Route path='/' element={<Navigate to="/role-select/login" replace />} />
-        <Route path='/role-select/login' element={<RoleSelection1 />} />
-        <Route path='/role-select/signup' element={<RoleSelection1 />} />
-        <Route path='/:role/login' element={<LoginPage />} />
-        <Route path='/:role/signup' element={<SignupPage />} />
+      <Route path='/' element={<Navigate to="/role-select/login" replace />} />
+      <Route path='/role-select/login' element={<RoleSelection1 />} />
+      <Route path='/role-select/signup' element={<RoleSelection1 />} />
+      <Route path='/:role/login' element={<LoginPage />} />
+      <Route path='/:role/signup' element={<SignupPage />} />
 
-        {/* Protected Role-based Routes */}
-        {/* Patient Routes */}
-        <Route path='/patient' element={ <PrivateRoutes /> }>
-            <Route path='home' element={<Home />} />
-            <Route path='comfort-contorl' element={<ComfortControl />} />
-            <Route path='media' element={<Media />} />
-            <Route path='family' element={<Family />} />
-            <Route path='goals' element={<Goals />} />
-        </Route>
-        {/* Nurse Routes */}
-        <Route path='/nurse' element={ <PrivateRoutes /> }>
-            <Route path='profile' element={<Profile />} />
-            <Route path='patient-dashboard' element={<PatientDashboard />} />
-            <Route path='patient-goals' element={<PatientGoals />} />
-        </Route>
+      {/* Protected Role-based Routes */}
+      {/* Patient Routes */}
+      <Route path='/patient' element={<PrivateRoutes />}>
+        <Route index element={<Home />} />
+        <Route path='home' element={<Home />} />
+        <Route path='comfort-contorl' element={<ComfortControl />} />
+        <Route path='media' element={<Media />} />
+        <Route path='family' element={<Family />} />
+        <Route path='goals' element={<Goals />} />
+      </Route>
+      {/* Nurse Routes */}
+      <Route path='/nurse' element={<PrivateRoutes />}>
+        <Route index element={<Profile />} />
+        <Route path='profile' element={<Profile />} />
+        <Route path='patient-dashboard' element={<PatientDashboard />} />
+        <Route path='patient-goals' element={<PatientGoals />} />
+      </Route>
     </Routes>
   )
 }
