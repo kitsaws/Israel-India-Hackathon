@@ -57,7 +57,7 @@ function Navbar() {
       </NavLink>
 
       <NavLink to="/patient/home" end>
-        <img id='logo' src={Logo} />
+        <img src={Logo} width={150} />
       </NavLink>
     </nav>
   );
