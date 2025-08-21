@@ -3,6 +3,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const Patient = require(path.join(__dirname,'patient'))
+const Doctor = require(path.join(__dirname,'doctor'))
 const plm = require('passport-local-mongoose')
 
 
@@ -20,6 +21,17 @@ const nurseSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref : 'Doctor',
         default : undefined
+    },
+    age : {
+      type : String,
+      default : 25
+    },
+    gender : {
+      type : String,
+      default : 'Male'
+    },
+    telephone :{
+      type : String
     }
 })
 // #endregion
@@ -27,14 +39,17 @@ const nurseSchema = new Schema({
 
 // #region SCHEMA-METHODS
 // Schema method to assign a patient
-nurseSchema.methods.assignPatient = async function (patientId) {
-  this.patient = patientId;
+
+nurseSchema.methods.assignPatient = async function (username) {
+  const patient = await Patient.findOne({username:username})
+  this.patient = patient
   return await this.save();
 };
     
 // Schema method to assign a doctor
-nurseSchema.methods.assignDoctor = async function (doctorId) {
-  this.doctor = doctorId;
+nurseSchema.methods.assignDoctor = async function (username) {
+  const doctor = await Doctor.findOne({username:username})
+  this.doctor = doctor
   return await this.save();
 };
 

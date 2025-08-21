@@ -39,6 +39,9 @@ const patientSchema = new Schema({
         ref : 'Doctor',
         default : undefined
     },
+    telephone :{
+      type : String
+    },
     family : [
         {
             type : Schema.Types.ObjectId,

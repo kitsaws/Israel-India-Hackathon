@@ -3,3 +3,6 @@ ml/env/
 
 # Ignore Python cache folders inside ml
 ml/__pycache__/
+
+# ignore environment files
+.env
