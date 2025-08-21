@@ -34,7 +34,7 @@ export default function LoginPage() {
       setAuth({ loading: false, user: response.data.user, role: response.data.role });
 
       // Navigate to dashboard or appropriate page
-      navigate(`/${role}/home`);
+      navigate(`/${role}/patient-dashboard`);
 
     } catch (error) {
       console.error('Login error:', error);

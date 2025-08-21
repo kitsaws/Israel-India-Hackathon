@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom"
 import { User, Activity, Target, LogOut } from 'lucide-react'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import axios from "axios"
 import Logo from '../../assets/ventibridge.png'
@@ -26,7 +26,7 @@ const Navbar = () => {
                 { withCredentials: true }
             );
 
-            setAuth(null);
+            setAuth({ loading: true, user: null, role: null });
             navigate('/role-select/login');
         } catch (err) {
             console.error('Failed to logout', err);
@@ -60,7 +60,7 @@ const Navbar = () => {
             <div className="logout">
                 <button
                     onClick={handleLogout}
-                    className="cursor-pointer px-4 py-2 flex justify-center items-center gap-2 border-1 text-secondary-text transition-all duration-300 hover:text-white hover:bg-secondary-text-secondary-text rounded-full"
+                    className="cursor-pointer px-4 py-2 flex justify-center items-center gap-2 border-1 text-secondary-text transition-all duration-300 hover:text-white hover:bg-secondary-text rounded-full"
                 >
                     <LogOut />
                     <span>Logout</span>

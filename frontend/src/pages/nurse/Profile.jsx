@@ -1,5 +1,5 @@
 import React from 'react'
-import NurseLayout from '../layouts/NurseLayout'
+import NurseLayout from '../../layouts/NurseLayout'
 
 const Profile = () => {
   return (
