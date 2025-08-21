@@ -49,7 +49,11 @@ const patientSchema = new Schema({
         }
     ],
     goals: [goalSchema],
-    alerts : [alertSchema]
+    alerts : [alertSchema],
+    room: {
+      type: String,
+      default: null
+    },
 })
 
 // Add doctor
