@@ -12,6 +12,9 @@ import Family from '../pages/patient/Family'
 import Goals from '../pages/patient/Goals'
 
 import PrivateRoutes from './PrivateRoutes'
+import Profile from '../pages/nurse/Profile'
+import PatientDashboard from '../pages/nurse/PatientDashboard'
+import PatientGoals from '../pages/nurse/PatientGoals'
 
 const AppRoutes = () => {    
   return (
@@ -30,6 +33,12 @@ const AppRoutes = () => {
             <Route path='media' element={<Media />} />
             <Route path='family' element={<Family />} />
             <Route path='goals' element={<Goals />} />
+        </Route>
+        {/* Nurse Routes */}
+        <Route path='/nurse' element={ <PrivateRoutes /> }>
+            <Route path='profile' element={<Profile />} />
+            <Route path='patient-dashboard' element={<PatientDashboard />} />
+            <Route path='patient-goals' element={<PatientGoals />} />
         </Route>
     </Routes>
   )
