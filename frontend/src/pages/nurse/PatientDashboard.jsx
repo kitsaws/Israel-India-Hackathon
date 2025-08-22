@@ -56,7 +56,7 @@ const PatientInformation = ({ patient }) => {
   }
 
   return (
-    <div className="patientInfo p-6 w-full min-h-10 rounded-xl col-span-2 border-1 border-gray-200 shadow-md flex flex-col gap-4">
+    <div className="patientInfo bg-white p-6 w-full min-h-10 rounded-xl col-span-2 border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
         <span className='text-blue-400'><User /></span>
         <span className='text-xl font-semibold'>Patient Information</span>
@@ -88,7 +88,7 @@ const EmotionalState = ({ data }) => {
   }
 
   return (
-    <div className="emotionalState p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
+    <div className="emotionalState bg-white p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
         <span className='text-yellow-400'><CircleAlert /></span>
         <span className='text-xl font-semibold'>Emotional State</span>
@@ -113,7 +113,7 @@ const CurrentVitals = ({ vitals }) => {
     )
   }
   return (
-    <div className="currentVitals col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
+    <div className="currentVitals bg-white col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
         <span className='text-green-400'><TrendingUp /></span>
         <span className='text-xl font-semibold'>Current Vitals</span>
@@ -141,7 +141,7 @@ const FamilyMembers = ({ family }) => {
     )
   }
   return (
-    <div className="familyMembers col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
+    <div className="familyMembers bg-white col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
         <span className='text-green-400'><Users /></span>
         <span className='text-xl font-semibold'>Family Members</span>
@@ -158,42 +158,7 @@ const FamilyMembers = ({ family }) => {
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const {patient} = usePatient();
-
-  if (patient.loading) {
-    return <Loading />;
-  }
-
-  if (!patient.data) {
-    return <div>No patient data found.</div>; // optional fallback
-  }
-
-  // const patient = {
-  //   name: 'John Doe',
-  //   age: 56,
-  //   gender: 'Male',
-  //   id: 'P001',
-  //   room: 'ICU-101',
-  //   admission: '2024-01-15',
-  //   condition: 'Stable',
-  //   family: [
-  //     {
-  //       name: 'Jane Smith',
-  //       relation: 'Wife',
-  //       phno: '+1 (555) 123-4567'
-  //     },
-  //     {
-  //       name: 'Mike Smith',
-  //       relation: 'Son',
-  //       phno: '+1 (555) 234-5678'
-  //     },
-  //     {
-  //       name: 'Lisa Johnson',
-  //       relation: 'Sister',
-  //       phno: '+1 (555) 345-6789'
-  //     }
-  //   ]
-  // }
+  const { patient } = usePatient();
   const emotionData = {}
   const vitals = {
     heartRate: 70,
@@ -203,12 +168,11 @@ const PatientDashboard = () => {
   const handlePatientLogout = async () => {
     try {
       await axios.post(
-        `http://localhost:3000/api/auth/nurse/logout-patient`,
+        `http://localhost:3000/api/nurse/patient/logout`,
         {},
         { withCredentials: true }
       );
       console.log('Patient Logged Out Successfully');
-
     } catch (err) {
       console.error('Failed to logout', err);
     }
