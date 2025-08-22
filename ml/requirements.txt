@@ -9,3 +9,9 @@ scipy
 pyautogui
 keyboard
 pywin32
+tensorflow
+keras
+matplotlib
+Pillow
+tqdm
+
