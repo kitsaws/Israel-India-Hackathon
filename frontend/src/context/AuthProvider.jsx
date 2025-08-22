@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
+import Loading from '../components/Loading';
 
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({ loading: true, user: null, role: null });
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
-            {!auth.loading && children}
-    </AuthContext.Provider>
+            {auth.loading ? <Loading /> : children}
+        </AuthContext.Provider>
     );
 };

@@ -12,13 +12,12 @@ function App() {
   useEffect(() => {    
     if (auth.loading) {
       console.log('Loading authentication status...');
-      return <Loading />
     } else if (auth.user) {
       console.log('User is authenticated:', auth.user);
       navigate(`/${auth.role}/`);
     } else {
       console.log('User is not authenticated');
-      navigate(`/`);
+      navigate(`/role-select/login`);
     }
   }, [auth])
 

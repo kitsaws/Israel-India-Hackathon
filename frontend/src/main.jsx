@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthProvider.jsx'
 import { RoleProvider } from './context/RoleProvider.jsx'
+import { PatientProvider } from './context/nurse/PatientProvider.jsx'
 import './index.css'
 import App from './App.jsx'
 
@@ -11,7 +12,7 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <RoleProvider>
         <AuthProvider>
-          <App />
+            <App />
         </AuthProvider>
       </RoleProvider>
     </BrowserRouter>
