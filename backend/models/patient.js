@@ -1,6 +1,7 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const plm = require('passport-local-mongoose')
+const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+const { Schema } = mongoose;
+const plm = require('passport-local-mongoose');
 
 const alertSchema = new Schema({
     message: { type: String, required: true },
@@ -10,7 +11,7 @@ const alertSchema = new Schema({
 });
 
 const goalSchema = new Schema({
-    title : { type : String , default : null },
+    title: { type: String, default: null },
     description: { type: String, required: true },
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
@@ -18,100 +19,120 @@ const goalSchema = new Schema({
 });
 
 const patientSchema = new Schema({
-    name : {
-        type : String,
+    name: {
+        type: String,
+        required: [true, 'Patient name is required.'],
+        trim: true
     },
-    age : {
-        type : Number
+    age: {
+        type: Number,
+        required: [true, 'Patient age is required.'],
+        min: 0
     },
-    gender : {
-        type : String,
-        enum : ['Male','Female','Other'],
-        default : 'Female'
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other'],
+        default: 'Female'
     },
-    nurse : {
-        type : Schema.Types.ObjectId,
-        ref : 'Nurse',
-        default : undefined
+    nurse: {
+        type: Schema.Types.ObjectId,
+        ref: 'Nurse',
+        default: null
     },
-    doctor : {
-        type : Schema.Types.ObjectId,
-        ref : 'Doctor',
-        default : undefined
+    doctor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Doctor',
+        default: null
     },
-    telephone :{
-      type : String
+    telephone: {
+        type: String,
+        trim: true
     },
-    family : [
-        {
-            type : Schema.Types.ObjectId,
-            ref : 'Family'
-        }
-    ],
+    family: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Family'
+    }],
     goals: [goalSchema],
-    alerts : [alertSchema],
-    room: {
-      type: String,
-      default: null
-    },
-})
+    alerts: [alertSchema],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+    // Correct: `id` and `room` are NOT defined here.
+});
 
-// Add doctor
-patientSchema.methods.assignDoctor = function (doctorId) {
+// -------- Methods (using async/await) --------
+
+patientSchema.methods.assignDoctor = async function(doctorId) {
     this.doctor = doctorId;
     return this.save();
 };
-    
-// Add nurse
-patientSchema.methods.assignNurse = function (nurseId) {
+
+patientSchema.methods.assignNurse = async function(nurseId) {
     this.nurse = nurseId;
     return this.save();
 };
-    
-// Add a family member (push into array)
-patientSchema.methods.addFamilyMember = function (familyId) {
+
+patientSchema.methods.addFamilyMember = async function(familyId) {
     if (!this.family.includes(familyId)) {
         this.family.push(familyId);
     }
     return this.save();
 };
 
-// Add an alert
-patientSchema.methods.addAlert = function (message, severity = "low") {
-  this.alerts.push({ message, severity });
-  return this.save().then(() => {
-    return this.alerts[this.alerts.length - 1]; // return the new alert
-  });
+patientSchema.methods.addAlert = async function(message, severity = "low") {
+    this.alerts.push({ message, severity });
+    await this.save();
+    return this.alerts[this.alerts.length - 1];
 };
 
-// Mark an alert inactive
-patientSchema.methods.deactivateAlert = function (alertId) {
-  const alert = this.alerts.id(alertId);
-  if (alert) {
-    alert.active = false;
-  }
-  return this.save();
+patientSchema.methods.deactivateAlert = async function(alertId) {
+    const alert = this.alerts.id(alertId);
+    if (alert) {
+        alert.active = false;
+    }
+    return this.save();
 };
 
 // -------- Middleware --------
 
-// Auto-remove inactive alerts before saving
+patientSchema.pre("save", function(next) {
+    this.alerts = this.alerts.filter((alert) => alert.active);
+    next();
+});
 
+// --- DEBUGGING STEP: Add this line right here ---
+console.log('--- Schema fields BEFORE AutoIncrement ---', Object.keys(patientSchema.paths));
+// ------------------------------------------------
+
+
+
+
+// --- AutoIncrement ---
+patientSchema.plugin(AutoIncrement, {
+  id: 'patient_id_seq',
+  inc_field: 'patientId',
+  start_seq: 1
+});
+
+patientSchema.plugin(AutoIncrement, {
+  id: 'room_id_seq',
+  inc_field: 'room',
+  start_seq: 1
+});
+
+// --- Formatting step (safe: no double-formatting) ---
 patientSchema.pre("save", function (next) {
-  const removedIds = this.alerts
-    .filter((alert) => !alert.active)
-    .map((alert) => alert._id.toString());
-
-  if (removedIds.length > 0) {
-    console.log("Cleaning inactive alerts:", removedIds);
+  if (this.isModified("patientId") && /^\d+$/.test(this.patientId)) {
+    this.patientId = `P${String(this.patientId).padStart(4, "0")}`;
   }
-
-  this.alerts = this.alerts.filter((alert) => alert.active);
+  if (this.isModified("room") && /^\d+$/.test(this.room)) {
+    this.room = `R${String(this.room).padStart(4, "0")}`;
+  }
   next();
 });
 
+// Attach passport-local-mongoose last.
+patientSchema.plugin(plm);
 
-
-patientSchema.plugin(plm)
-
-module.exports = mongoose.model('Patient',patientSchema)
+module.exports = mongoose.model('Patient', patientSchema);
