@@ -57,6 +57,10 @@ const patientSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    condition : {
+        type : String,
+        default : "stable"
     }
     // Correct: `id` and `room` are NOT defined here.
 });
@@ -101,36 +105,21 @@ patientSchema.pre("save", function(next) {
     next();
 });
 
-// --- DEBUGGING STEP: Add this line right here ---
-console.log('--- Schema fields BEFORE AutoIncrement ---', Object.keys(patientSchema.paths));
-// ------------------------------------------------
-
-
-
 
 // --- AutoIncrement ---
 patientSchema.plugin(AutoIncrement, {
-  id: 'patient_id_seq',
-  inc_field: 'patientId',
-  start_seq: 1
+  id: "patient_id_seq",
+  inc_field: "patientId",
+  start_seq: 1,
 });
 
 patientSchema.plugin(AutoIncrement, {
-  id: 'room_id_seq',
-  inc_field: 'room',
-  start_seq: 1
+  id: "room_id_seq",
+  inc_field: "room",
+  start_seq: 1,
 });
+  
 
-// --- Formatting step (safe: no double-formatting) ---
-patientSchema.pre("save", function (next) {
-  if (this.isModified("patientId") && /^\d+$/.test(this.patientId)) {
-    this.patientId = `P${String(this.patientId).padStart(4, "0")}`;
-  }
-  if (this.isModified("room") && /^\d+$/.test(this.room)) {
-    this.room = `R${String(this.room).padStart(4, "0")}`;
-  }
-  next();
-});
 
 // Attach passport-local-mongoose last.
 patientSchema.plugin(plm);
