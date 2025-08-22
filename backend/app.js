@@ -3,6 +3,7 @@ const path = require('path');
 //#endregion
 
 //THIRD-PARTY MODULES
+const callRoutes = require(path.join(__dirname,'routes','callRoutes'))
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -107,11 +108,13 @@ app.use((req, res, next) => {
 //endregion
 
 //ROUTES
+
 const { createRouter } = require(path.join(__dirname, 'routes', 'api'));
 const apiRoutes = createRouter(memoryStore);
 const patientRoutes = require(path.join(__dirname, 'routes', 'patients'));
 
 app.use('/patients', patientRoutes);
+app.use('/api/call',callRoutes)
 app.use('/api', apiRoutes);
 //#endregion
 
