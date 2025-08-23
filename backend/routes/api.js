@@ -333,6 +333,25 @@ function createRouter(memoryStore) {
         });
     });
 
+    //Nurse can delete patient's goal
+    router.delete('/nurse/patient/deletegoal',async(req,res)=>{
+        const {username,goalId} = req.body;
+        const patient = await Patient.findOne({username});
+        if(!patient){
+            return res.status(404).json({ success: false, messgae:"Patient Not Found" });
+        }
+
+        const goal = patient.goals.id(goalId);
+        if(!goal){
+            return res.status(404).json({ success: false, message: "Goal Not Found" });
+        }
+
+        goal.deleteOne();
+        await patient.save();
+
+        return res.status(200).json({ success: true, message: "Goal Deleted", goals: patient.goals });
+    });
+
     //------------------- Doctor dash routes--------------------------
     router.post('/auth/signup/doctor', async (req, res) => {
         try {
