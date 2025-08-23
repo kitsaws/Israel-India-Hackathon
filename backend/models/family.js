@@ -8,13 +8,24 @@ const familySchema = new Schema({
         type : String,
         default : 'John Doe'
     },
+    email: {
+        type: String,
+        default: 'fam@gmail.com'
+    },
+    age: {
+        type: Number,
+        default: 0
+    },
+    gender: {
+        type: String,
+        default: 'Male'
+    },
+    telephone : {
+        type : String,
+    },
     relation : {
         type : String,
         default : 'default-relative'
-    },
-    contact : {
-        type : String,
-        default : '000-000-000'
     },
     image: {
         type: String,
@@ -31,11 +42,6 @@ familySchema.methods.addPatient = async function (patient) {
     this.patient = patient
     await this.save()
 };
-    
-familySchema.methods.addContact = async function (cont){
-    this.contact = cont
-    await this.save()
-}
 
 familySchema.plugin(plm)
 

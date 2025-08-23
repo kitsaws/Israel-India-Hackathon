@@ -465,6 +465,59 @@ function createRouter(memoryStore) {
         return res.json({ success: true, nurse: patient.nurse });
     });
 
+    //-------------------------FAMILY ROUTES------------------------------
+    router.post('/auth/signup/family', async (req, res) => {
+        try {
+            const { fullName: name, email, age, gender, password, telephone, relation, patientUserName } = req.body;
+            const username = name.toLowerCase().replace(/\s+/g, '.');
+            const patient=await Patient.findOne({username: patientUserName});
+            if (!patient) {
+                return res.status(404).json({ success: false, message: "Patient not found with provided username" });
+            }
+            const newFamily = new Family({
+                name,
+                email,
+                age,
+                username,
+                gender,
+                telephone,
+                relation,
+                patient: patient._id
+            });
+            await Family.register(newFamily, password);
+            console.log(`Created Family: ${name} | username: ${username} | password: ${password}`);
+
+            patient.family.push(newFamily._id);
+            await patient.save();
+
+            return res.json({ success: true });
+        } catch (err) {
+            console.log(err);
+            return res.send(err);
+        }
+    });
+
+    //get Patient's other family members through patient
+    router.get('/family/get-other-family',async(req,res)=>{
+        const family=await Family.findById(req.user._id);
+        if(!family){
+            return res.status(404).json({ success: false, message: "Family not found" });
+        }
+
+        const patient=await Patient.findById(family.patient).populate('family');
+        if(!patient){
+            return res.status(404).json({ success: false, message: "Patient not found" });
+        }
+
+        //here get other family
+        const familyArr=patient.family.filter(fam=>fam._id.toString()!=req.user._id.toString());
+        
+        return res.status(200).json({
+            success: true, message: "Patient's other family memebrs fetched",familyArr
+        });
+
+    });
+
     
   return router;
 }
