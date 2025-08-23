@@ -510,7 +510,7 @@ function createRouter(memoryStore) {
         }
 
         //here get other family
-        const familyArr=patient.family.filter(fam=>fam._id.toString()!=req.user._id.toString());
+        const familyArr=patient.family.filter(fam=>fam._id.toString()!==req.user._id.toString());
         
         return res.status(200).json({
             success: true, message: "Patient's other family memebrs fetched",familyArr
