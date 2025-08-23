@@ -378,18 +378,30 @@ function createRouter(memoryStore) {
 
     // DOCTOR GET-PATIENTS
     router.get('/doctor/get-patient', async (req,res)=>{
-        const patients = await Doctor.findById(req.user._id).populate('patients').patients
-        return res.send(patients)
+        console.log('************ set-patient doctor dash ******************');
+        console.log(req.user);
+        const doctor = await Doctor.findById(req.user._id).populate('patients');
+        if(!doctor){
+            return res.status(404).json({ success: false, message: 'Doctor not found' });
+        }
+
+        return res.json({ success: true, patient: doctor.patients });
     })
 
     // DOCTOR GET-NURSES
     router.get('/doctor/get-nurse', async (req,res)=>{
         console.log('************* GET: /api/doctor/get-nurses************')
-        const patients = await Doctor.findById(req.user._id).populate('patients').patients
+        const doctor = await Doctor.findById(req.user._id).populate({
+            path: 'patients',
+            populate: {
+                path:'nurse'
+            }
+        });
+        const patients = doctor.patients || [];
         const nurses = []
-        for ( p in patients ){
-            const nurse = await Nurse.findById(p.nurse)
-            console.log(`************${nurse.username}*************`)
+        for (const patient of patients) {
+            const nurseId = patient.nurse
+            const nurse = await Nurse.findById(nurseId)
             nurses.push(nurse)
         }
         console.log('************* returning array of nurses *************')

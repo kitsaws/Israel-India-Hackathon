@@ -37,7 +37,7 @@ const doctorSchema = new Schema({
 
 
 doctorSchema.methods.addPatient = function (patientId) {
-    if (!this.patients.includes(patientId)) {
+    if (!this.patients.some(id => id.equals(patientId))) {
       this.patients.push(patientId);
     }
     return this.save();
