@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const ProgressBar = ({ goals }) => {
-  let completedGoals = goals.filter(goal => goal.isCompleted);
+  let completedGoals = goals.filter(goal => goal.completed);
 
   return (
     <div className="w-[60%] rounded-full h-3 bg-gray-200">
@@ -18,16 +18,16 @@ const ProgressBar = ({ goals }) => {
 
 const Goals = () => {
   const { auth } = useAuth();
-  const { user } = auth
-  
+  const [user, setUser] = useState(auth.user);
   const [goals, setGoals] = useState(user.goals);
   const [completedGoals, setCompletedGoals] = useState([])
+
   useEffect(() => {
-    setGoals(user.goals);
-  }, [user.goals])
-  useEffect(() => {
-    setCompletedGoals(goals.filter(goal => goal.isCompleted));
-  }, [goals])
+    if(goals.length){
+      setGoals(goals);
+      setCompletedGoals(goals.filter(goal => goal.completed));
+    }
+  }, [auth, goals])
 
   return (
     <PatientLayout>
@@ -41,11 +41,11 @@ const Goals = () => {
       <div className='p-5 mt-5 w-full grid grid-cols-2 gap-x-2 gap-y-4 justify-center items-center text-2xl'>
         {goals.map(goal => {
           return (
-            <div className={`rounded-xl shadow-md py-8 px-6 flex flex-col gap-1 justify-center ${goal.isCompleted ? 'bg-gray-300' : 'bg-primary'}`}>
+            <div className={`rounded-xl shadow-md py-8 px-6 flex flex-col gap-1 justify-center ${goal.completed ? 'bg-gray-300' : 'bg-primary'}`}>
               <p className="font-bold">{goal.title}</p>
               <p className="text-text-muted text-base">{goal.description}</p>
-              <p className={`cursor-pointer px-4 py-2 rounded-xl w-fit text-lg text-white ${goal.isCompleted ? 'bg-green-500' : 'bg-blue-500'}`}>
-                {goal.isCompleted ? "Completed" : "In Progress"}
+              <p className={`cursor-pointer px-4 py-2 rounded-xl w-fit text-lg text-white ${goal.completed ? 'bg-green-500' : 'bg-blue-500'}`}>
+                {goal.completed ? "Completed" : "In Progress"}
               </p>
             </div>
           )
