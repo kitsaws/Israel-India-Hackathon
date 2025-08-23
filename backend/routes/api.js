@@ -335,7 +335,7 @@ function createRouter(memoryStore) {
 
     //Nurse can delete patient's goal
     router.delete('/nurse/patient/deletegoal',async(req,res)=>{
-        const {username,goalId} = req.config.data;
+        const {username,goalId} = req.body;
         const patient = await Patient.findOne({username});
         if(!patient){
             return res.status(404).json({ success: false, messgae:"Patient Not Found" });

@@ -35,9 +35,7 @@ const PersonalInformation = ({ nurse }) => {
       </h3>
       <div className='w-full grid grid-cols-2 gap-y-2'>
         <Info label={'Name'} value={nurse.name} />
-        <Info label={'Nurse ID'} value={nurse.id} />
-        <Info label={'Department'} value={nurse.department} />
-        <Info label={'Shift'} value={nurse.shift} />
+        <Info label={'Shift'} value={nurse.shift} />  
         <Info label={'Email'} value={nurse.email} />
         <Info label={'Phone'} value={nurse.contact} />
       </div>

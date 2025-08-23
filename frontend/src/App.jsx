@@ -3,7 +3,8 @@ import './App.css'
 import AppRoutes from './routes/AppRoutes'
 import { useAuth } from './context/AuthContext'
 import { useEffect } from 'react'
-import Loading from './components/Loading'
+import { ToastContainer } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { auth } = useAuth();
@@ -24,6 +25,9 @@ function App() {
   return (
     <div className='min-h-screen bg-background text-text'>
       <AppRoutes user={auth.user} />
+      <ToastContainer 
+        position="bottom-left"
+      />
     </div>
   )
 }
