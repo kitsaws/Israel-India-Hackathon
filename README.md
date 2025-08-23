@@ -27,9 +27,12 @@ Enhance patient experience in restorative healthcare — particularly for patien
 
 ### 🧬 Slide Title: Proposed Solution
 
-We propose a **webcam-based AI system** with the following key components:
+We propose a **webcam + IoT-based AI system** with the following key components:
 
-### 1. 👁️ Blink/Gaze-Based UI (Assistive Interaction) (for round 1)
+### 1. 👁️ Nose / Blink–Based UI (Assistive Interaction)
+
+Patients interact hands-free by blinking or nose movements.
+Provides simple communication options like "need repositioning," "pain relief," "nurse call."
 
 - Patients select options by gazing or blinking at buttons for 2 seconds.
 - Allows hands-free operation of the interface for communication and requests.
@@ -40,16 +43,27 @@ We propose a **webcam-based AI system** with the following key components:
 - Detects signs of pain, sadness, fatigue, or fear.
 - Alerts staff if emotional well-being drops.
 
-### 3. 🌬️ Predictive Weaning Readiness (for round 1)
+### 3. 🌬️ Predictive Weaning Readiness 
 
 - ML model predicts the best time to remove mechanical ventilation.
 - Uses historical vitals (RR, FiO2, PEEP, etc.) and comorbidities.
 - Visual dashboard for doctors to align clinical judgment.
 
-### 4. 🛏️ Comfort Control Simulation (No Hardware Required)
+### 4. 🤖 AI Proxy Nurse (ML Model)
 
-- Simulated control over lights, fan, and bed recline.
-- Enhances a sense of autonomy and future readiness.
+-Learns from patient vitals + nurse feedback.
+-Predicts patient needs (e.g., repositioning, suctioning, oxygen adjustment).
+-Provides nurses with decision support instead of fixed threshold alerts.
+
+### 5. 📞 Patient–Nurse Connection (Twilio Integration)
+
+-If needed the patient can place a call to the nurse.
+-Ensures rapid response to urgent needs.
+
+### 6. 🛋️ Vitals Monitoring via IoT (ESP32)
+
+-Collects heart rate, blood pressure, oxygen level, ventilator status.
+-Feeds data into the AI model for continuous monitoring.
 
 ---
 
@@ -57,14 +71,16 @@ We propose a **webcam-based AI system** with the following key components:
 
 **What's Unique:**
 
-- **Full Non-Touch Interface:** Patients control UI with gaze or blink alone.
+- **Multi-Modal Full Non-Touch Interface:** Patients can use nose tracking, blink, or emotion cues to communicate..
 - **Emotion + Health Integration:** Combines emotional AI with clinical AI.
-- **Zero Hardware Dependency:** Simulates room control without actual IOT.
+- **Adaptive Proxy Nurse AI:** Goes beyond fixed thresholds → ML model learns from nurse feedback + patient history..
 - **Predictive Ventilation Timing:** Addresses real ICU problem with data.
+- **Seamless Nurse Connectivity:** Real-time alerts via Twilio, ensuring quick interventions.
 
 **Show-Stopper:**
 
-→ *Patients control their environment and express emotions — with just their eyes.*
+→ *Patients control their environment and express emotions - with just subtle facial cues.*
+→ *An AI “proxy nurse” that understands both the patient’s body (vitals) and emotions — predicting needs before words are possible.*
 
 ---
 
@@ -74,6 +90,8 @@ We propose a **webcam-based AI system** with the following key components:
 - **Emotion Detection:** Pre-trained CNN (e.g., FER2013 or AffectNet) running per frame.
 - **Weaning Readiness Model:** Trained Gradient Boosting or LSTM using ICU vitals data.
 - **Simulation Interface:** React or Flutter-based UI that mimics real control buttons.
+- **IoT Vitals Monitoring:** ESP32-based sensors stream heart rate, blood pressure, SpO₂, and ventilator status to backend.
+- **AI Proxy Nurse Model:** RandomForest + IsolationForest trained on labeled patient vitals to predict needs (repositioning, suctioning, oxygen adjustment).
 
 ---
 
@@ -85,9 +103,11 @@ Accessible via browser or tablet with webcam access.
 
 **Modules Include:**
 
-- 👁️ Blink/Gaze UI
+- 👁️ Blink/Nose UI
 - 🧠 Mood Monitoring Panel
 - 📊 Weaning Prediction Dashboard (for doctors)
-- 🛋️ Simulated Comfort Control Interface
+- 🛋️ Vitals Monitoring Dashboard
+- 🤖 AI Proxy Nurse
+- 📞 Nurse Alert System
 
 ---
