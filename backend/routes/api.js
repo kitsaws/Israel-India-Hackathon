@@ -329,13 +329,13 @@ function createRouter(memoryStore) {
 
         const updatedGoal=await patient.toggleGoalCompletion(goalId);
 
-        return res.status(200).json({success: true,message: "Goal status updated successfully",goal: updatedGoal
+        return res.status(200).json({success: true,message: "Goal status updated successfully",goals: patient.goals
         });
     });
 
     //Nurse can delete patient's goal
     router.delete('/nurse/patient/deletegoal',async(req,res)=>{
-        const {username,goalId} = req.body;
+        const {username,goalId} = req.config.data;
         const patient = await Patient.findOne({username});
         if(!patient){
             return res.status(404).json({ success: false, messgae:"Patient Not Found" });
