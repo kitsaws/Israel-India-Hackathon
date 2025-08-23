@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom"
 import { User, Activity, Target, LogOut } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
-import { usePatient } from '../../context/nurse/PatientContext'
+import { useAuth } from '../context/AuthContext'
+import { usePatient } from '../context/nurse/PatientContext'
 import { useNavigate } from 'react-router-dom'
 import axios from "axios"
-import Logo from '../../assets/ventibridge.png'
+import Logo from '../assets/ventibridge.png'
 
 const NavbarButton = ({ logo, text, activeClass }) => {
     return (
@@ -17,7 +17,7 @@ const NavbarButton = ({ logo, text, activeClass }) => {
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { setAuth } = useAuth();
+    const { auth, setAuth } = useAuth();
     const { patient, setPatient } = usePatient();
 
     const handleLogout = async () => {
@@ -43,23 +43,23 @@ const Navbar = () => {
         <nav className='w-full shadow-md flex justify-between items-center px-10 py-4'>
             <div>
                 <ul className="flex justify-center items-center gap-7">
-                    <NavLink to="/nurse/">
+                    <NavLink to={`/${auth.role}/`}>
                         <img src={Logo} width={90} alt="" />
                     </NavLink>
-                    <NavLink to="/nurse/profile">
+                    <NavLink to={`/${auth.role}/profile`}>
                         {({ isActive }) => (
                             <NavbarButton logo={<User size={20} />} text={'Profile'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />
                         )}
                     </NavLink>
                     {patient &&
-                        <NavLink to="/nurse/patient-dashboard">
+                        <NavLink to={`/${auth.role}/patient-dashboard`}>
                             {({ isActive }) => (
                                 <NavbarButton logo={<Activity />} text={'Patient Dashboard'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />
                             )}
                         </NavLink>
                     }
-                    {patient &&
-                        <NavLink to="/nurse/patient-goals">
+                    {patient && auth.role === 'nurse' &&
+                        <NavLink to={`/nurse/patient-goals`}>
                             {({ isActive }) => (
                                 <NavbarButton logo={<Target />} text={'Patient Goals'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />
                             )}

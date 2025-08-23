@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRole } from '../../../context/RoleContext';
 import { useAuth } from '../../../context/AuthContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import AuthLayout from '../AuthLayout';
 import SwitchRoleCard from '../../../components/auth/SwitchRoleCard';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/auth/login/nurse`, {
+      const response = await axios.post(`http://localhost:3000/api/auth/login/doctor`, {
         username: formData.username,
         password: formData.password,
       },{ withCredentials: true });
@@ -38,7 +39,7 @@ export default function LoginPage() {
 
     } catch (error) {
       console.error('Login error:', error);
-      alert(error.response?.data?.message || 'Login failed. Please try again.');
+      toast.error('Error logging in. Please try again.')
     }
   };
 

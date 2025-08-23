@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { PatientContext } from './PatientContext';
 import axios from 'axios';
 import Loading from '../../components/Loading';
+import { useAuth } from '../AuthContext';
 
 export const PatientProvider = ({ children }) => {
-
+    const { auth } = useAuth();
     const [patient, setPatient] = useState({ loading: true, data: null });
 
     useEffect(() => {
         const fetchPatient = async () => {
             try {
                 const res = await axios.get(
-                    'http://localhost:3000/api/nurse/get-patient',
+                    `http://localhost:3000/api/${auth.role}/get-patient`,
                     { withCredentials: true,
                         validateStatus: function (status) {
                             // accepts all status codes, so it won't throw error for intended 300+ status

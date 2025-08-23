@@ -12,6 +12,7 @@ const DoctorSignup = () => {
     fullName: '',
     email: '',
     telephone: '',
+    department: '',
     age: '',
     gender: '',
     password: '',
@@ -42,7 +43,8 @@ const DoctorSignup = () => {
       setFormData({
         fullName: '',
         email: '',
-        telephone: '',  
+        telephone: '',
+        department: '',  
         age: '',
         gender: '',
         password: '',
@@ -75,6 +77,18 @@ const DoctorSignup = () => {
               className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              required
+            />
+          </div>
+          <div className="col-span-2 flex flex-col">
+            <label htmlFor="department" className="mb-1 text-sm font-medium text-gray-700">Department</label>
+            <input
+              type="text"
+              id="department"
+              placeholder="Enter your department"
+              className="w-full border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              value={formData.department}
+              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
               required
             />
           </div>

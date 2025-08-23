@@ -3,35 +3,18 @@ import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp,
 import { useNavigate } from 'react-router-dom'
 import { usePatient } from '../../context/nurse/PatientContext'
 import Loading from '../../components/Loading'
-import axios from 'axios'
 import moment from 'moment'
-import { toast } from 'react-toastify'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-const PageHeader = ({ handleEditPatient, handlePatientLogout }) => {
+const PageHeader = () => {
   return (
     <div className='w-full header flex justify-between items-center py-2 px-6'>
       <h2 className='flex gap-2 justify-center items-center'>
         <span className='text-blue-400'><Activity size={30} /></span>
         <span className='text-2xl font-semibold'>Patient Dashboard</span>
       </h2>
-      <div className='flex gap-2'>
-        <button
-          onClick={handleEditPatient}
-          className="cursor-pointer px-4 py-2 flex justify-center items-center gap-2 border-1 text-blue-400 transition-all duration-300 hover:text-white hover:bg-blue-400 rounded-full"
-        >
-          <PenLine size={20} />
-          <span>Edit Patient Info</span>
-        </button>
-        <button
-          onClick={handlePatientLogout}
-          className="cursor-pointer px-4 py-2 flex justify-center items-center gap-2 border-1 text-secondary-text transition-all duration-300 hover:text-white hover:bg-secondary-text rounded-full"
-        >
-          <LogOut />
-          <span>Logout Patient</span>
-        </button>
-      </div>
-    </div>
+    </div >
   )
 }
 
@@ -84,8 +67,8 @@ const EmotionalState = ({ data }) => {
       <div>
         <p className='text-gray-400 text-sm mb-1'>{label}</p>
         {label.toLowerCase() === 'current state' ?
-          <p className={`font-semibold text-xl px-4 py-2 rounded-full border-1 border-gray-200 w-fit`}>{value}</p> :
-          <p className='font-semibold text-xl'>{value}</p>
+          <p className={`font-semibold text-sm px-2 py-1 rounded-full border-1 border-gray-200 w-fit`}>{value}</p> :
+          <p className='font-semibold text-lg'>{value}</p>
         }
       </div>
     )
@@ -222,32 +205,15 @@ const PatientDashboard = () => {
     };
   }, []);
 
-  const handlePatientLogout = async () => {
-    try {
-      await axios.post(
-        `http://localhost:3000/api/nurse/patient/logout`,
-        {},
-        { withCredentials: true }
-      );
-      console.log('Patient Logged Out Successfully');
-      toast.success('Patient logged out successfully.')
-    } catch (err) {
-      console.error('Failed to logout', err);
-      toast.error('Failed to log out the patient. Please try again.')
-    }
-  }
-  const handleEditPatient = () => {
-    navigate('/nurse/edit-patient')
-  }
 
   return (
     <GeneralLayout>
-      <PageHeader handleEditPatient={handleEditPatient} handlePatientLogout={handlePatientLogout} />
+      <PageHeader />
       <div className='patientData w-full grid grid-cols-3 gap-x-2 gap-y-4'>
         <PatientInformation patient={patient} />
         <EmotionalState data={emotionData.data} />
         <CurrentVitals vitals={vitals.data} />
-        {/* <FamilyMembers family={patient.family} /> */}
+        <FamilyMembers family={patient.family} />
       </div>
     </GeneralLayout>
   )

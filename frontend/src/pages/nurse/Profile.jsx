@@ -1,5 +1,5 @@
 import { User, Stethoscope, Users } from 'lucide-react'
-import NurseLayout from '../../layouts/NurseLayout'
+import GeneralLayout from '../../layouts/GeneralLayout'
 import { usePatient } from '../../context/nurse/PatientContext'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react'
@@ -35,9 +35,9 @@ const PersonalInformation = ({ nurse }) => {
       </h3>
       <div className='w-full grid grid-cols-2 gap-y-2'>
         <Info label={'Name'} value={nurse.name} />
-        <Info label={'Shift'} value={nurse.id} />  
+        <Info label={'Nurse ID'} value={'N' + String(nurse.nurseId).padStart(4, '0')} />  
         <Info label={'Email'} value={nurse.email} />
-        <Info label={'Phone'} value={nurse.contact} />
+        <Info label={'Phone'} value={nurse.telephone} />
       </div>
     </div>
   )
@@ -173,14 +173,14 @@ const Profile = () => {
   }
 
   return (
-    <NurseLayout>
+    <GeneralLayout>
       <PageHeader />
       <div className='patientData w-full grid grid-cols-2 gap-x-4 gap-y-4'>
         <PersonalInformation nurse={nurse} />
         <SupervisingDoctor doctor={doctor} />
         <PatientList patient={patient} />
       </div>
-    </NurseLayout>
+    </GeneralLayout>
   )
 }
 

@@ -13,9 +13,12 @@ import Goals from '../pages/patient/Goals'
 
 import { PatientProvider } from '../context/nurse/PatientProvider'
 import { AuthProvider } from '../context/AuthProvider'
-import Profile from '../pages/nurse/Profile'
-import PatientDashboard from '../pages/nurse/PatientDashboard'
-import PatientGoals from '../pages/nurse/PatientGoals'
+import ProfileNurse from '../pages/nurse/Profile'
+import PatientDashboardNurse from '../pages/nurse/PatientDashboard'
+import PatientGoalsNurse from '../pages/nurse/PatientGoals'
+
+import ProfileDoctor from '../pages/doctor/Profile'
+import PatientDashboardDoctor from '../pages/nurse/PatientDashboard'
 
 const AppRoutes = () => {
   return (
@@ -47,9 +50,19 @@ const AppRoutes = () => {
         </PatientProvider>
       }>
         <Route index element={<Navigate to={'profile'} />} />
-        <Route path='profile' element={<Profile />} />
-        <Route path='patient-dashboard' element={<PatientDashboard />} />
-        <Route path='patient-goals' element={<PatientGoals />} />
+        <Route path='profile' element={<ProfileNurse />} />
+        <Route path='patient-dashboard' element={<PatientDashboardNurse />} />
+        <Route path='patient-goals' element={<PatientGoalsNurse />} />
+      </Route>
+      {/* Doctor Routes */}
+      <Route path='/doctor' element={
+        <PatientProvider>
+          <PrivateRoutes />
+        </PatientProvider>
+      }>
+        <Route index element={<Navigate to={'profile'} />} />
+        <Route path='profile' element={<ProfileDoctor />} />
+        <Route path='patient-dashboard' element={<PatientDashboardDoctor />} />
       </Route>
     </Routes>
   )

@@ -1,6 +1,6 @@
-import Navbar from '../components/nurse/Navbar'
+import Navbar from '../components/Navbar'
 
-const NurseLayout = ({ children }) => {
+const GeneralLayout = ({ children }) => {
   return (
     <div className='min-h-0 max-h-screen app-container flex flex-col overflow-y-auto'>
       <Navbar />
@@ -11,4 +11,4 @@ const NurseLayout = ({ children }) => {
   )
 }
 
-export default NurseLayout
+export default GeneralLayout

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import NurseLayout from '../../layouts/NurseLayout'
+import GeneralLayout from '../../layouts/GeneralLayout'
 import { usePatient } from '../../context/nurse/PatientContext'
 import { Calendar, CircleCheckBig, Plus, Target, X, ListTodo } from 'lucide-react'
 import moment from 'moment'
@@ -292,7 +292,7 @@ const PatientGoals = () => {
   }, [goals]);
 
   return (
-    <NurseLayout>
+    <GeneralLayout>
       <PageHeader showAddGoal={showAddGoal} setShowAddGoal={setShowAddGoal} />
       <div className='w-full grid grid-cols-3 gap-x-2 gap-y-4'>
         <CountCard title={'Total Goals'} count={goals.length} />
@@ -302,7 +302,7 @@ const PatientGoals = () => {
         <ActiveGoalsList goals={activeGoals} patient={patient} setGoals={setGoals} />
         <CompletedGoalsList goals={completedGoals} patient={patient} setGoals={setGoals} />
       </div>
-    </NurseLayout>
+    </GeneralLayout>
   )
 }
 
