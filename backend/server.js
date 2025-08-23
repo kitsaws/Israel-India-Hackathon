@@ -15,3 +15,5 @@ mongoose.connect('mongodb://localhost:27017/loadout')
 app.listen(PORT, () => {
     console.log(`Server live on http://localhost:${PORT}`.bgWhite.black);
 });
+
+
