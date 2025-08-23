@@ -112,7 +112,7 @@ const PatientList = ({ patient }) => {
         <div className='flex flex-col'>
           <p className='text-lg'>{name}</p>
           <p className='text-gray-400 text-md'>{`Room: ${room}`}</p>
-          <p className='text-gray-400 text-md'>{`ID: ${id}`}</p>
+          <p className='text-gray-400 text-md'>{`ID: ${'P' + String(id).padStart(4,'0')}`}</p>
         </div>
         <div>
           <p className={`font-semibold text-sm px-2 py-1 rounded-full text-white w-fit ${conditionStyles(condition)}`}>{condition}</p>
@@ -129,7 +129,7 @@ const PatientList = ({ patient }) => {
       </h3>
       {patient ?
         <div className='w-full flex flex-wrap gap-5 items-center'>
-          <Card name={patient.name} room={patient.room} id={patient.id} condition={patient.condition} />
+          <Card name={patient.name} room={patient.room} id={patient.patientId} condition={patient.condition} />
         </div> :
         <div>
           <p className='text-gray-400 text-lg font-semibold mb-4'>No patient assigned.</p>

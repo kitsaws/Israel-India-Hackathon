@@ -50,7 +50,7 @@ const WorkingNurses = ({ nurses }) => {
       <div className='cursor-pointer min-w-75 max-w-150 flex-1 flex justify-between gap-4 rounded-xl px-6 py-6 bg-gray-50 border-1 border-gray-200 transition-all duration-300'>
         <div className='flex flex-col'>
           <p className='text-lg font-semibold'>{nurse.name}</p>
-          <p className='text-gray-400 text-md'>{`Nurse ID: ${nurse.nurseId}`}</p>
+          <p className='text-gray-400 text-md'>{`Nurse ID: ${'N' + String(nurse.nurseId).padStart(3,'0')}`}</p>
         </div>
         <div>
           {/* <p className={`font-semibold text-sm px-2 py-1 rounded-full text-white w-fit`}>{nurse.patient}</p> */}
@@ -138,7 +138,7 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient, setSelectedPa
         <div className='flex flex-col'>
           <p className='text-lg font-semibold'>{p.name}</p>
           <p className='text-gray-400 text-md'>{`Room: ${p.room}`}</p>
-          <p className='text-gray-400 text-md'>{`ID: ${p.id}`}</p>
+          <p className='text-gray-400 text-md'>{`ID: ${'P' + String(p.patientId).padStart(4,'0')}`}</p>
         </div>
         <div>
           <p className={`font-semibold text-sm px-2 py-1 rounded-full text-white w-fit ${conditionStyles(p.condition)}`}>{p.condition}</p>

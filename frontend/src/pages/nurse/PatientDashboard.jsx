@@ -2,11 +2,12 @@ import GeneralLayout from '../../layouts/GeneralLayout'
 import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp, Wind } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePatient } from '../../context/nurse/PatientContext'
-import Loading from '../../components/Loading'
 import axios from 'axios'
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const PageHeader = ({ handleEditPatient, handlePatientLogout }) => {
   return (
@@ -77,7 +78,7 @@ const PatientInformation = ({ patient }) => {
   )
 }
 
-const EmotionalState = ({ data }) => {
+const EmotionalState = ({ data, loading }) => {
   const Info = ({ label, value }) => {
     console.log('emotion value: ', value);
     return (
@@ -98,16 +99,20 @@ const EmotionalState = ({ data }) => {
         <span className='text-xl font-semibold'>Emotional State</span>
       </h3>
       <div className="flex flex-col gap-4">
-        <Info label={'Current State'} value={data} />
-        {/* <Info label={'Last Updated: 2 hours ago'} value={''} /> */}
+        {loading ? (
+          <Skeleton height={30} width={200} />
+        ) : (
+          <Info label={'Current State'} value={data} />
+        )}
       </div>
 
     </div>
   )
 }
 
-const CurrentVitals = ({ vitals }) => {
+const CurrentVitals = ({ vitals, loading }) => {
   const Card = ({ logo, label, value }) => {
+    if (loading) return <Skeleton height={30} width={200} />
     return (
       <div className='min-w-75 flex-1 flex flex-col gap-1 justify-center items-center rounded-xl py-6 bg-gray-100 border-1 border-gray-200'>
         <span>{logo}</span>
@@ -127,7 +132,7 @@ const CurrentVitals = ({ vitals }) => {
         );
         console.log('Vitals recommendation: ', response.data);
         setRecommendation(response.data.recommendation);
-      } catch(err){
+      } catch (err) {
         console.error('Internal Server Error: ', err);
       }
     }
@@ -146,7 +151,7 @@ const CurrentVitals = ({ vitals }) => {
         <Card logo={<Wind className='text-green-500' />} label={'O2 Satuartion'} value={String(vitals.oxygenLevel) + ' %'} />
         <Card logo={<Heart className='text-red-500' />} label={'Ventilator Status'} value={String(vitals.ventilatorStatus).toUpperCase()} />
       </div>
-      { recommondation &&
+      {recommondation &&
         <Card label={recommondation} />
       }
     </div>
@@ -266,8 +271,8 @@ const PatientDashboard = () => {
       <PageHeader handleEditPatient={handleEditPatient} handlePatientLogout={handlePatientLogout} />
       <div className='patientData w-full grid grid-cols-3 gap-x-2 gap-y-4'>
         <PatientInformation patient={patient} />
-        <EmotionalState data={emotionData.data} />
-        <CurrentVitals vitals={vitals.data} />
+        <EmotionalState data={emotionData.data} loading={emotionData.loading} />
+        <CurrentVitals vitals={vitals.data} loading={vitals.loading} />
         {/* <FamilyMembers family={patient.family} /> */}
       </div>
     </GeneralLayout>

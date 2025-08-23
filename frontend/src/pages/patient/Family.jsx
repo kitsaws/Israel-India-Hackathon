@@ -16,7 +16,7 @@ const Family = () => {
         <h2 className='text-4xl text-accent font-semibold' >Stay in Touch</h2>
         <Heart size={30} className='text-accent' />
       </div>
-      <div className='p-5 mt-5 w-full flex flex-wrap justify-center items-center gap-8 text-2xl'>
+      <div className='p-5 mt-5 w-full grid grid-cols-3 gap-x-2 gap-y-4 text-2xl'>
         {family.map(member => {
           return (
             <div className='rounded-xl bg-primary shadow-md h-36 py-8 px-6 flex flex-col justify-center items-center '>

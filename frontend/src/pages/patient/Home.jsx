@@ -4,7 +4,8 @@ import { Heart, Clock } from 'lucide-react'
 import useClock from '../../hooks/useClock'
 import PatientLayout from '../../layouts/PatientLayout'
 import { useAuth } from '../../context/AuthContext'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Home = () => {
   const { date, time } = useClock();
@@ -16,7 +17,39 @@ const Home = () => {
   }, [user])
 
   const goals = user.goals
-  const completedGoals = goals.filter(goal => goal.isCompleted);
+  const completedGoals = goals.filter(goal => goal.completed);
+
+  const [nurse, setNurse] = useState(null);
+  const [doctor, setDoctor] = useState(null);
+  useEffect(() => {
+    const fetchNurse = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3000/api/patient/get-nurse',
+          { withCredentials: true }
+        );
+        console.log('Fetched Nurse Data: ', response.data)
+        setNurse(response.data);
+      } catch(err){
+        console.error('Internal Server Error: ', err)
+      }
+    }
+
+    const fetchDoctor = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3000/api/patient/get-doctor',
+          { withCredentials: true }
+        );
+        console.log('Fetched Doctor Data: ', response.data)
+        setDoctor(response.data);
+      } catch(err){
+        console.error('Internal Server Error: ', err)
+      }
+    }
+    fetchNurse();
+    fetchDoctor();
+  }, [])
 
   return (
     <PatientLayout>
@@ -29,8 +62,8 @@ const Home = () => {
         </div>
         {/* change the name of 'card-container' later */}
         <div id="card-container" className='w-full flex justify-around items-center'>
-          <HomePageCard logo={<Clock />} title={'Next Check-in'} description={'Dr. Smith at 2:30 PM'} isBordered={true} />
-          <HomePageCard logo={<Heart />} title={'Care Team'} description={'Nurse Sarah is on duty'} isBordered={true} />
+          <HomePageCard logo={<Clock />} title={'Assigned Doctor'} description={`Dr. ${doctor.name} is your assigned doctor.`} isBordered={true} />
+          <HomePageCard logo={<Heart />} title={'Care Team'} description={`Nurse ${nurse.name} is on duty`} isBordered={true} />
         </div>
         {/* today's highlights */}
         <div id='highlights' className='flex flex-col justify-around items-center'>
@@ -38,7 +71,7 @@ const Home = () => {
           <div className='flex justify-around items-center'>
             <HomePageCard logo={`${completedGoals.length}/${goals.length}`} title={''} description={'Goals Completed'} isBordered={false} />
             <HomePageCard logo={'2'} title={''} description={'Family Calls'} isBordered={false} />
-            <HomePageCard logo={'45 min'} title={''} description={'Relaxation Time'} isBordered={false} />
+            {/* <HomePageCard logo={'45 min'} title={''} description={'Relaxation Time'} isBordered={false} /> */}
           </div>
         </div>
         {/* motivational message */}

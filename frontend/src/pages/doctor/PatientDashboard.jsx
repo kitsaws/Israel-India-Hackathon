@@ -2,10 +2,11 @@ import GeneralLayout from '../../layouts/GeneralLayout'
 import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp, Wind } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePatient } from '../../context/nurse/PatientContext'
-import Loading from '../../components/Loading'
 import moment from 'moment'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const PageHeader = () => {
   return (
@@ -60,7 +61,7 @@ const PatientInformation = ({ patient }) => {
   )
 }
 
-const EmotionalState = ({ data }) => {
+const EmotionalState = ({ data, loading }) => {
   const Info = ({ label, value }) => {
     console.log('emotion value: ', value);
     return (
@@ -81,16 +82,20 @@ const EmotionalState = ({ data }) => {
         <span className='text-xl font-semibold'>Emotional State</span>
       </h3>
       <div className="flex flex-col gap-4">
-        <Info label={'Current State'} value={data} />
-        {/* <Info label={'Last Updated: 2 hours ago'} value={''} /> */}
+        {loading ? (
+          <Skeleton height={30} width={200} />
+        ) : (
+          <Info label={'Current State'} value={data} />
+        )}
       </div>
 
     </div>
   )
 }
 
-const CurrentVitals = ({ vitals }) => {
+const CurrentVitals = ({ vitals, loading }) => {
   const Card = ({ logo, label, value }) => {
+    if (loading) return <Skeleton height={30} width={200} />
     return (
       <div className='min-w-75 flex-1 flex flex-col gap-1 justify-center items-center rounded-xl py-6 bg-gray-100 border-1 border-gray-200'>
         <span>{logo}</span>
@@ -231,9 +236,9 @@ const PatientDashboard = () => {
       <PageHeader />
       <div className='patientData w-full grid grid-cols-3 gap-x-2 gap-y-4'>
         <PatientInformation patient={patient} />
-        <EmotionalState data={emotionData.data} />
-        <CurrentVitals vitals={vitals.data} />
-        <FamilyMembers family={patient.family} />
+        <EmotionalState data={emotionData.data} loading={emotionData.loading} />
+        <CurrentVitals vitals={vitals.data} loading={vitals.loading} />
+        {/* <FamilyMembers family={patient.family} /> */}
       </div>
     </GeneralLayout>
   )
