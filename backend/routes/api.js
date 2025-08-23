@@ -377,13 +377,13 @@ function createRouter(memoryStore) {
     });
 
     // DOCTOR GET-PATIENTS
-    router.get('/doctor/get-patients', async (req,res)=>{
+    router.get('/doctor/get-patient', async (req,res)=>{
         const patients = await Doctor.findById(req.user._id).populate('patients').patients
         return res.send(patients)
     })
 
     // DOCTOR GET-NURSES
-    router.get('/doctor/get-nurses', async (req,res)=>{
+    router.get('/doctor/get-nurse', async (req,res)=>{
         console.log('************* GET: /api/doctor/get-nurses************')
         const patients = await Doctor.findById(req.user._id).populate('patients').patients
         const nurses = []
