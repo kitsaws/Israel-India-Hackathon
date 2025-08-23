@@ -15,7 +15,7 @@ const NavbarButton = ({ logo, text, activeClass }) => {
     );
 }
 
-const Navbar = () => {
+const Navbar = ({selectedPatient}) => {
     const navigate = useNavigate();
     const { auth, setAuth } = useAuth();
     const { patient, setPatient } = usePatient();
@@ -51,7 +51,18 @@ const Navbar = () => {
                             <NavbarButton logo={<User size={20} />} text={'Profile'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />
                         )}
                     </NavLink>
-                    {patient &&
+
+                    {/* will be visible for doctor if 'selectedPatient' field is mentioned */}
+                    {auth.role === 'doctor' && patient && patient.selectedPatient &&
+                        <NavLink to={`/${auth.role}/patient-dashboard`}>
+                            {({ isActive }) => (
+                                <NavbarButton logo={<Activity />} text={'Patient Dashboard'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />
+                            )}
+                        </NavLink>
+                    }
+
+                    {/* will be visible for nurse if patient is present */}
+                    {auth.role === 'nurse' && patient &&
                         <NavLink to={`/${auth.role}/patient-dashboard`}>
                             {({ isActive }) => (
                                 <NavbarButton logo={<Activity />} text={'Patient Dashboard'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />

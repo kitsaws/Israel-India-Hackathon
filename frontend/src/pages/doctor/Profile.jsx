@@ -77,7 +77,7 @@ const WorkingNurses = ({ nurses }) => {
   )
 };
 
-const PatientList = ({ patient, showAddPatient, setShowAddPatient }) => {
+const PatientList = ({ patient, showAddPatient, setShowAddPatient, setPatient }) => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ username: '' })
 
@@ -105,7 +105,19 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient }) => {
     }
   }
 
-  const Card = ({ name, room, id, condition }) => {
+  const handlePatientSelect = async (p) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/doctor/get-patient-data/${p._id}`,
+        { withCredentials: true }
+      );
+      console.log('selected patient: ', response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const Card = ({p}) => {
     const conditionStyles = (condition) => {
       switch (condition.toLowerCase()) {
         case 'stable':
@@ -117,14 +129,17 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient }) => {
       }
     }
     return (
-      <div className='cursor-pointer min-w-75 max-w-150 flex-1 flex justify-between gap-4 rounded-xl px-6 py-4 bg-gray-50 border-1 border-gray-200 hover:shadow-md transition-all duration-300'>
+      <div
+        className='cursor-pointer min-w-75 max-w-150 flex-1 flex justify-between gap-4 rounded-xl px-6 py-4 bg-gray-50 border-1 border-gray-200 hover:shadow-md transition-all duration-300'
+        onClick={() => handlePatientSelect(p)}
+      >
         <div className='flex flex-col'>
-          <p className='text-lg font-semibold'>{name}</p>
-          <p className='text-gray-400 text-md'>{`Room: ${room}`}</p>
-          <p className='text-gray-400 text-md'>{`ID: ${id}`}</p>
+          <p className='text-lg font-semibold'>{p.name}</p>
+          <p className='text-gray-400 text-md'>{`Room: ${p.room}`}</p>
+          <p className='text-gray-400 text-md'>{`ID: ${p.id}`}</p>
         </div>
         <div>
-          <p className={`font-semibold text-sm px-2 py-1 rounded-full text-white w-fit ${conditionStyles(condition)}`}>{condition}</p>
+          <p className={`font-semibold text-sm px-2 py-1 rounded-full text-white w-fit ${conditionStyles(p.condition)}`}>{p.condition}</p>
         </div>
       </div>
     )
@@ -146,7 +161,10 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient }) => {
       </div>
       {patient.length > 0 ?
         <div className='w-full flex flex-wrap gap-5 items-center'>
-          {patient.map(p => (<Card key={p.patientId} name={p.name} room={'R' + String(p.room).padStart(3, '0')} id={'P' + String(p.patientId).padStart(4, '0')} condition={p.condition} />))}
+          {patient.map(p => (<Card
+            key={p.patientId}
+            p={p}
+          />))}
         </div> :
         <p className='text-gray-400 text-lg font-semibold mb-4'>No patient assigned.</p>
       }
@@ -177,10 +195,10 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient }) => {
 
 const Profile = () => {
   const { auth } = useAuth();
+  const doctor = auth.user;
 
   // this is an array of patients
-  const { patient } = usePatient();
-  const doctor = auth.user;
+  const { patient, setPatient } = usePatient();
 
   const [nurses, setNurses] = useState({ loading: true, data: [] });
   useEffect(() => {
@@ -205,7 +223,7 @@ const Profile = () => {
       <div className='patientData w-full grid grid-cols-2 gap-x-4 gap-y-4'>
         <PersonalInformation doctor={doctor} />
         <WorkingNurses nurses={nurses.data} />
-        <PatientList patient={patient} showAddPatient={showAddPatient} setShowAddPatient={setShowAddPatient} />
+        <PatientList patient={patient} showAddPatient={showAddPatient} setShowAddPatient={setShowAddPatient} setPatient={setPatient} />
       </div>
     </GeneralLayout>
   )
