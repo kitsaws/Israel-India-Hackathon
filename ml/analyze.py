@@ -13,7 +13,8 @@ eventlet.monkey_patch()
 
 # --- 1. Initialize Flask App and SocketIO ---
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing for React
+# MODIFIED: Added 'supports_credentials=True' to handle the specific CORS error.
+CORS(app, supports_credentials=True)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # --- 2. Global Variables ---
@@ -95,7 +96,7 @@ def background_fetcher():
         # Push the new data to all connected WebSocket clients
         socketio.emit('vitals_update', latest_vitals_data)
         
-        # MODIFIED: Print the vitals and the recommendation as requested.
+        # Print the vitals and the recommendation as requested.
         print(f"Vitals: {latest_vitals_data['inputVitals']} -> Recommendation: {latest_vitals_data['recommendation']}")
         
         # Wait for 10 seconds before the next cycle

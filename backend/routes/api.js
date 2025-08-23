@@ -421,7 +421,7 @@ function createRouter(memoryStore) {
     });
 
     //get patients data
-    router.post(`/doctor/get-patient-data/:id`,async(req,res)=>{
+    router.get(`/doctor/get-patient-data/:id`,async(req,res)=>{
         try {
             const patientId = req.params.id;
             // fetch patient by patientId
