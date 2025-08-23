@@ -95,14 +95,15 @@ function createRouter(memoryStore) {
     // Signup nurse
     router.post('/auth/signup/nurse', async (req, res) => {
         try {
-            const { fullName: name, age, gender, password, telephone } = req.body;
+            const { fullName: name, age, gender, password, telephone, email } = req.body;
             const username = name.toLowerCase().replace(/\s+/g, '.');
             const newNurse = new Nurse({
             name,
             age,
             username,
             gender,
-            telephone
+            telephone,
+            email
             });
             await Nurse.register(newNurse, password);
             console.log(`Created nurse: ${name} | username: ${username} | password: ${password}`);
@@ -374,6 +375,26 @@ function createRouter(memoryStore) {
             return res.send(err);
         }
     });
+
+    // DOCTOR GET-PATIENTS
+    router.get('/doctor/get-patients', async (req,res)=>{
+        const patients = await Doctor.findById(req.user._id).populate('patients').patients
+        return res.send(patients)
+    })
+
+    // DOCTOR GET-NURSES
+    router.get('/doctor/get-nurses', async (req,res)=>{
+        console.log('************* GET: /api/doctor/get-nurses************')
+        const patients = await Doctor.findById(req.user._id).populate('patients').patients
+        const nurses = []
+        for ( p in patients ){
+            const nurse = await Nurse.findById(p.nurse)
+            console.log(`************${nurse.username}*************`)
+            nurses.push(nurse)
+        }
+        console.log('************* returning array of nurses *************')
+        return res.send(nurses)
+    })
 
   return router;
 }

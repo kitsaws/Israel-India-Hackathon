@@ -1,6 +1,7 @@
 
 const path = require('path')
 const mongoose = require('mongoose')
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 const Schema = mongoose.Schema
 const Patient = require(path.join(__dirname,'patient'))
 const Doctor = require(path.join(__dirname,'doctor'))
@@ -16,6 +17,9 @@ const nurseSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref : 'Patient',
         default : undefined
+    },
+    email : {
+      type : String
     },
     doctor : {
         type : Schema.Types.ObjectId,
@@ -98,7 +102,12 @@ nurseSchema.methods.removeGoal = async function (goalId) {
 // #endregion
 
 
-
+// --- AutoIncrement ---
+nurseSchema.plugin(AutoIncrement, {
+  id: "nurse_id_seq",
+  inc_field: "nurseId",
+  start_seq: 1,
+});
 
 
 nurseSchema.plugin(plm)
