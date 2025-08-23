@@ -396,6 +396,18 @@ function createRouter(memoryStore) {
         return res.send(nurses)
     })
 
+    // Assign Patient To Doctor
+    router.post('/doctor/assign-patient', async (req, res) => {
+        console.log('************ assign-patient doctor dash ******************');
+        console.log(req.user);
+
+        const doctor = await Doctor.findById(req.user._id);
+        const { username } = req.body;
+        const patient = await Patient.findOne({ username });
+        await doctor.addPatient(patient._id);
+        return res.json({ success: true ,message: "Patient Assigned Successfully To Doctor "});
+    });
+
   return router;
 }
 
