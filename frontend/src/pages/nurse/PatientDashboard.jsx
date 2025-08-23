@@ -1,9 +1,10 @@
 import NurseLayout from '../../layouts/NurseLayout'
-import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp } from 'lucide-react'
+import { Activity, LogOut, User, Users, PenLine, CircleAlert, Heart, TrendingUp, Wind } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePatient } from '../../context/nurse/PatientContext'
 import Loading from '../../components/Loading'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const PageHeader = ({ handleEditPatient, handlePatientLogout }) => {
   return (
@@ -76,6 +77,7 @@ const PatientInformation = ({ patient }) => {
 
 const EmotionalState = ({ data }) => {
   const Info = ({ label, value }) => {
+    console.log('emotion value: ', value);
     return (
       <div>
         <p className='text-gray-400 text-sm mb-1'>{label}</p>
@@ -94,8 +96,8 @@ const EmotionalState = ({ data }) => {
         <span className='text-xl font-semibold'>Emotional State</span>
       </h3>
       <div className="flex flex-col gap-4">
-        <Info label={'Current State'} value={'Anxious'} />
-        <Info label={'Last Updated: 2 hours ago'} value={''} />
+        <Info label={'Current State'} value={data} />
+        {/* <Info label={'Last Updated: 2 hours ago'} value={''} /> */}
       </div>
 
     </div>
@@ -120,9 +122,9 @@ const CurrentVitals = ({ vitals }) => {
       </h3>
       <div className='w-full flex flex-wrap gap-5 items-center'>
         <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.heartRate) + ' BPM'} />
-        <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.heartRate) + ' BPM'} />
-        <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.heartRate) + ' BPM'} />
-        <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.heartRate) + ' BPM'} />
+        <Card logo={<Activity className='text-blue-500' />} label={'Blood Pressure'} value={String(vitals.bloodPressure) + ' mmHg'} />
+        <Card logo={<Wind className='text-green-500' />} label={'O2 Satuartion'} value={String(vitals.oxygenLevel) + ' %'} />
+        {/* <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.ventilatorStatus) + ' BPM'} /> */}
       </div>
     </div>
   )
@@ -159,11 +161,64 @@ const FamilyMembers = ({ family }) => {
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const { patient } = usePatient();
-  const emotionData = {}
-  const vitals = {
-    heartRate: 70,
-  }
+  const [emotionData, setEmotionData] = useState({loading: true, data: null});
+  const [vitals, setVitals] = useState({
+    loading: true,
+    data: {
+      heartRate: '',
+      bloodPressure: '',
+      oxygenLevel: '',
+    }
+  });
 
+  // Vitals from ESP
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://192.168.4.1/vitals');
+        setVitals({ loading: false, data: response.data });
+      } catch (err) {
+        setVitals(prev => ({ ...prev, loading: false }));
+        // console.log('Error Fetching Vitals: ', err);
+      }
+    };
+
+    fetchData(); // ✅ no await here
+
+    const interval = setInterval(fetchData, 1500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+  // Emotion Data
+  useEffect(() => {
+    // Replace with your Python WS server URL
+    const socket = new WebSocket("ws://localhost:8765");
+
+    socket.onopen = () => {
+      console.log("Connected to WebSocket server");
+    };
+
+    socket.onmessage = (event) => {
+      const parsed = JSON.parse(event.data);
+      console.log("Message from server:", parsed);
+      setEmotionData({loading: false, data: parsed.emotion}); // update state with latest message
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    // Cleanup on unmount
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   const handlePatientLogout = async () => {
     try {
@@ -186,8 +241,8 @@ const PatientDashboard = () => {
       <PageHeader handleEditPatient={handleEditPatient} handlePatientLogout={handlePatientLogout} />
       <div className='patientData w-full grid grid-cols-3 gap-x-2 gap-y-4'>
         <PatientInformation patient={patient} />
-        <EmotionalState data={emotionData} />
-        <CurrentVitals vitals={vitals} />
+        <EmotionalState data={emotionData.data} />
+        <CurrentVitals vitals={vitals.data} />
         <FamilyMembers family={patient.family} />
       </div>
     </NurseLayout>

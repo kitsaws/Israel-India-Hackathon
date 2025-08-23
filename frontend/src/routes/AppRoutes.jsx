@@ -28,7 +28,7 @@ const AppRoutes = () => {
       {/* Protected Role-based Routes */}
       {/* Patient Routes */}
       <Route path='/patient' element={<PrivateRoutes />}>
-        <Route index element={<Home />} />
+        <Route index element={<Navigate to='home' />} />
         <Route path='home' element={<Home />} />
         <Route path='comfort-contorl' element={<ComfortControl />} />
         <Route path='media' element={<Media />} />
@@ -41,7 +41,7 @@ const AppRoutes = () => {
             <PrivateRoutes />
           </PatientProvider>
           }>
-          <Route index element={<Profile />} />
+          <Route index element={<Navigate to={'profile'}  />} />
           <Route path='profile' element={<Profile />} />
           <Route path='patient-dashboard' element={<PatientDashboard />} />
           <Route path='patient-goals' element={<PatientGoals />} />
