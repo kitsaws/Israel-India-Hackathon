@@ -168,7 +168,7 @@ function createRouter(memoryStore) {
         });
     });
 
-    // Nurse dash routes
+    //------------------- Nurse dash routes--------------------------
     router.post('/nurse/set-goal', async (req, res) => {
         console.log('************ set-goal nurse dash ******************');
         console.log(req.user);
@@ -191,7 +191,7 @@ function createRouter(memoryStore) {
         return res.json({ success: true });
     });
 
-    //Nurse Can Edit Patient's Details
+    //Nurse Can Get Patient's Details
     router.get('/nurse/get-patient',async(req,res)=>{
         console.log('************ set-patient nurse dash ******************');
         console.log(req.user);
@@ -215,7 +215,7 @@ function createRouter(memoryStore) {
 
     //Nurse Can Edit Patient's Details
     router.post('/nurse/patient/edit',async(req,res)=>{
-        const {username, name, age, gender, room, telephone}=req.body;
+        const {username, name, age, gender, telephone}=req.body;
 
         const patient=await Patient.findOne({ username });
         if(!patient){
@@ -225,7 +225,6 @@ function createRouter(memoryStore) {
         patient.name=name;
         patient.age=age;
         patient.gender=gender;
-        patient.room=room;
         patient.telephone=telephone;
 
         await patient.save();
@@ -316,6 +315,44 @@ function createRouter(memoryStore) {
         } catch (error) {
             console.error("Logout error:", error);
             return res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    });
+
+    //Nurse can toggle goals completion status
+    router.put('/nurse/patient/togglegoal',async(req,res)=>{
+        const {username,goalId}=req.body;
+
+        const patient=await Patient.findOne({username});
+        if(!patient){
+            return res.status(404).json({success: false,messgae:"Patient Not Found"});
+        }
+
+        const updatedGoal=await patient.toggleGoalCompletion(goalId);
+
+        return res.status(200).json({success: true,message: "Goal status updated successfully",goal: updatedGoal
+        });
+    });
+
+    //------------------- Doctor dash routes--------------------------
+    router.post('/auth/signup/doctor', async (req, res) => {
+        try {
+            const { fullName: name, email, age, gender, password, telephone, department } = req.body;
+            const username = name.toLowerCase().replace(/\s+/g, '.');
+            const newDoctor = new Doctor({
+                name,
+                email,
+                age,
+                username,
+                gender,
+                telephone,
+                department
+            });
+            await Doctor.register(newDoctor, password);
+            console.log(`Created Doctor: ${name} | username: ${username} | password: ${password}`);
+            return res.json({ success: true });
+        } catch (err) {
+            console.log(err);
+            return res.send(err);
         }
     });
 

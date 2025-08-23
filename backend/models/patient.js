@@ -98,6 +98,33 @@ patientSchema.methods.deactivateAlert = async function(alertId) {
     return this.save();
 };
 
+patientSchema.methods.addGoal = async function(title, description) {
+    const newGoal = { title, description };
+    this.goals.push(newGoal);
+    await this.save();
+    return this.goals[this.goals.length - 1];
+};
+
+patientSchema.methods.toggleGoalCompletion = async function(goalId) {
+    const goal = this.goals.id(goalId);
+    if(!goal){
+        throw new Error("Goal not found");
+    }
+
+    if(goal.completed){
+        //complete to not complete
+        goal.completed = false;
+        goal.completedAt = null;
+    }else{ 
+        //not complete to complete
+        goal.completed = true;
+        goal.completedAt = new Date();
+    }
+
+    await this.save();
+    return goal;
+};
+
 // -------- Middleware --------
 
 patientSchema.pre("save", function(next) {

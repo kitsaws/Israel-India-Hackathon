@@ -11,8 +11,27 @@ const doctorSchema = new Schema({
             type : Schema.Types.ObjectId,
             ref : 'Patient'
         }
-    ]
-})
+    ],
+    email:{
+        type: String
+    },
+    age:{
+        type : String,
+        default : 25 
+    },
+    gender:{
+      type: String,
+      default: 'Male'
+    },
+    telephone:{
+        type: String,
+        trim: true
+    },
+    department:{
+        type: String
+    },
+
+},{timestamps: true})
 
 
 
