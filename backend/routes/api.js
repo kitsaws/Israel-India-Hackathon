@@ -385,12 +385,18 @@ function createRouter(memoryStore) {
     // DOCTOR GET-NURSES
     router.get('/doctor/get-nurse', async (req,res)=>{
         console.log('************* GET: /api/doctor/get-nurses************')
-        const patients = await Doctor.findById(req.user._id).populate('patients').patients
+        const doctor = await Doctor.findById(req.user._id).populate({
+            path: 'patients',
+            populate: {
+                path:'nurse'
+            }
+        });
+        const patients = doctor.patients || [];
         const nurses = []
-        for ( p in patients ){
-            const nurse = await Nurse.findById(p.nurse)
-            console.log(`************${nurse.username}*************`)
-            nurses.push(nurse)
+        for (const patient of patients) {
+            if (patient.nurse) {
+                nurses.push(patient.nurse)
+            }
         }
         console.log('************* returning array of nurses *************')
         return res.send(nurses)
