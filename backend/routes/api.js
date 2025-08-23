@@ -420,6 +420,21 @@ function createRouter(memoryStore) {
         return res.json({ success: true ,message: "Patient Assigned Successfully To Doctor ",patient});
     });
 
+    //get patients data
+    router.post(`doctor/get-patient-data/:id`,async(req,res)=>{
+        try {
+            const patientId = req.params.id;
+            // fetch patient by patientId
+            const patient = await Patient.findById(patientId);
+            if (!patient) {
+                return res.status(404).json({ error: 'Patient not found' });
+            }
+            return res.json(patient);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
   return router;
 }
 
