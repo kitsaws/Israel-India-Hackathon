@@ -11,7 +11,8 @@ import Media from '../pages/patient/Media'
 import Family from '../pages/patient/Family'
 import Goals from '../pages/patient/Goals'
 
-import {PatientProvider} from '../context/nurse/PatientProvider'
+import { PatientProvider } from '../context/nurse/PatientProvider'
+import { AuthProvider } from '../context/AuthProvider'
 import Profile from '../pages/nurse/Profile'
 import PatientDashboard from '../pages/nurse/PatientDashboard'
 import PatientGoals from '../pages/nurse/PatientGoals'
@@ -27,7 +28,11 @@ const AppRoutes = () => {
 
       {/* Protected Role-based Routes */}
       {/* Patient Routes */}
-      <Route path='/patient' element={<PrivateRoutes />}>
+      <Route path='/patient' element={
+        <AuthProvider>
+          <PrivateRoutes />
+        </AuthProvider>
+      }>
         <Route index element={<Navigate to='home' />} />
         <Route path='home' element={<Home />} />
         <Route path='comfort-contorl' element={<ComfortControl />} />
@@ -36,16 +41,16 @@ const AppRoutes = () => {
         <Route path='goals' element={<Goals />} />
       </Route>
       {/* Nurse Routes */}
-        <Route path='/nurse' element={
-          <PatientProvider>
-            <PrivateRoutes />
-          </PatientProvider>
-          }>
-          <Route index element={<Navigate to={'profile'}  />} />
-          <Route path='profile' element={<Profile />} />
-          <Route path='patient-dashboard' element={<PatientDashboard />} />
-          <Route path='patient-goals' element={<PatientGoals />} />
-        </Route>
+      <Route path='/nurse' element={
+        <PatientProvider>
+          <PrivateRoutes />
+        </PatientProvider>
+      }>
+        <Route index element={<Navigate to={'profile'} />} />
+        <Route path='profile' element={<Profile />} />
+        <Route path='patient-dashboard' element={<PatientDashboard />} />
+        <Route path='patient-goals' element={<PatientGoals />} />
+      </Route>
     </Routes>
   )
 }

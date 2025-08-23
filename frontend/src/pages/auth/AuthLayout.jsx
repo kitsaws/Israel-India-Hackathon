@@ -12,7 +12,7 @@ const AuthLayout = ({ children }) => {
 
   return (
     <div className='overflow-y-auto h-9/10 card w-1/3 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-primary shadow-lg rounded-xl'>
-      <div className="card-header w-full mb-6 text-center">
+      <div className="card-header w-full text-center">
         <h2 className='text-3xl text-accent font-bold mb-2'>{authType === 'login' ? 'Log In' : 'Sign Up'}</h2>
         <p className='text-md text-text-muted'>Welcome back to VentiBridge</p>
       </div>
