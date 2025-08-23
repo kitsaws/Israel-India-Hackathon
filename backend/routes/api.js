@@ -378,8 +378,15 @@ function createRouter(memoryStore) {
 
     // DOCTOR GET-PATIENTS
     router.get('/doctor/get-patient', async (req,res)=>{
-        const patients = await Doctor.findById(req.user._id).populate('patients').patients
-        return res.send(patients)
+        console.log('************ set-patient doctor dash ******************');
+        console.log(req.user);
+
+        const doctor = await Doctor.findById(req.user._id).populate('patients');
+        if(!doctor){
+            return res.status(404).json({ success: false, message: 'Doctor not found' });
+        }
+
+        return res.json({ success: true, patient: doctor.patients });
     })
 
     // DOCTOR GET-NURSES
@@ -405,7 +412,7 @@ function createRouter(memoryStore) {
         const { username } = req.body;
         const patient = await Patient.findOne({ username });
         await doctor.addPatient(patient._id);
-        return res.json({ success: true ,message: "Patient Assigned Successfully To Doctor "});
+        return res.json({ success: true ,message: "Patient Assigned Successfully To Doctor ",patient});
     });
 
   return router;
