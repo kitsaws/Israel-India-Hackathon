@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 const Schema = mongoose.Schema
 const plm = require('passport-local-mongoose')
 
@@ -41,6 +42,13 @@ doctorSchema.methods.addPatient = function (patientId) {
     }
     return this.save();
 };
+
+// --- AutoIncrement ---
+doctorSchema.plugin(AutoIncrement, {
+  id: "doctor_id_seq",
+  inc_field: "doctorId",
+  start_seq: 1,
+});
 
 doctorSchema.plugin(plm)
 
