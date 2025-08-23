@@ -400,9 +400,9 @@ function createRouter(memoryStore) {
         const patients = doctor.patients || [];
         const nurses = []
         for (const patient of patients) {
-            if (patient.nurse) {
-                nurses.push(patient.nurse)
-            }
+            const nurseId = patient.nurse
+            const nurse = await Nurse.findById(nurseId)
+            nurses.push(nurse)
         }
         console.log('************* returning array of nurses *************')
         return res.send(nurses)
