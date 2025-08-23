@@ -417,6 +417,7 @@ function createRouter(memoryStore) {
         const { username } = req.body;
         const patient = await Patient.findOne({ username });
         await doctor.addPatient(patient._id);
+        await patient.assignDoctor(req.user.id);
         return res.json({ success: true ,message: "Patient Assigned Successfully To Doctor ",patient});
     });
 
@@ -435,6 +436,36 @@ function createRouter(memoryStore) {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     });
+
+    //Get assigned doctor info
+    router.get('/patient/get-doctor',async(req,res)=>{
+        const patient=await Patient.findById(req.user._id).populate('doctor');
+        if(!patient){
+            return res.status(404).json({ success: false, message: "Patient not found" });
+        }
+
+        if(!patient.doctor){
+            return res.status(200).json({ success: true, doctor: null, message: "No doctor assigned" });
+        }
+
+        return res.json({ success: true, doctor: patient.doctor });
+    });
+
+    //Get assigned nurse info
+    router.get('/patient/get-nurse',async(req,res)=>{
+        const patient=await Patient.findById(req.user._id).populate('nurse');
+        if(!patient){
+            return res.status(404).json({ success: false, message: "Patient not found" });
+        }
+
+        if(!patient.nurse){
+            return res.status(200).json({ success: true, nurse: null, message: "No nurse assigned" });
+        }
+
+        return res.json({ success: true, nurse: patient.nurse });
+    });
+
+    
   return router;
 }
 
