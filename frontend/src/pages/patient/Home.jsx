@@ -19,8 +19,8 @@ const Home = () => {
   const goals = user.goals
   const completedGoals = goals.filter(goal => goal.completed);
 
-  const [nurse, setNurse] = useState(null);
-  const [doctor, setDoctor] = useState(null);
+  const [nurse, setNurse] = useState({ loading: true, data: { name: '' } });
+  const [doctor, setDoctor] = useState({ loading: true, data: { name: '' } });
   useEffect(() => {
     const fetchNurse = async () => {
       try {
@@ -29,8 +29,8 @@ const Home = () => {
           { withCredentials: true }
         );
         console.log('Fetched Nurse Data: ', response.data)
-        setNurse(response.data);
-      } catch(err){
+        setNurse({ loading: false, data: response.data.nurse });
+      } catch (err) {
         console.error('Internal Server Error: ', err)
       }
     }
@@ -42,8 +42,8 @@ const Home = () => {
           { withCredentials: true }
         );
         console.log('Fetched Doctor Data: ', response.data)
-        setDoctor(response.data);
-      } catch(err){
+        setDoctor({ loading: false, data: response.data.doctor });
+      } catch (err) {
         console.error('Internal Server Error: ', err)
       }
     }
@@ -62,8 +62,12 @@ const Home = () => {
         </div>
         {/* change the name of 'card-container' later */}
         <div id="card-container" className='w-full flex justify-around items-center'>
-          <HomePageCard logo={<Clock />} title={'Assigned Doctor'} description={`Dr. ${doctor.name} is your assigned doctor.`} isBordered={true} />
-          <HomePageCard logo={<Heart />} title={'Care Team'} description={`Nurse ${nurse.name} is on duty`} isBordered={true} />
+          {!doctor.loading &&
+            <HomePageCard logo={<Clock />} title={'Assigned Doctor'} description={`Dr. ${doctor.data.name} is your assigned doctor.`} isBordered={true} />
+          }
+          {!nurse.loading &&
+            <HomePageCard logo={<Heart />} title={'Care Team'} description={`Nurse ${nurse.data.name} is on duty`} isBordered={true} />
+          }
         </div>
         {/* today's highlights */}
         <div id='highlights' className='flex flex-col justify-around items-center'>
