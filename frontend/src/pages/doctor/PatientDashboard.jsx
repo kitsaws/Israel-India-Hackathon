@@ -99,6 +99,24 @@ const CurrentVitals = ({ vitals }) => {
       </div>
     )
   }
+
+  const [recommondation, setRecommendation] = useState(null);
+  useEffect(() => {
+    const fetchRecommendation = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:5000/vitals`,
+          { withCredentials: true }
+        );
+        console.log('Vitals recommendation: ', response.data);
+        setRecommendation(response.data.recommendation);
+      } catch (err) {
+        console.error('Internal Server Error: ', err);
+      }
+    }
+    fetchRecommendation();
+  }, [vitals]);
+
   return (
     <div className="currentVitals bg-white col-span-3 p-6 w-full min-h-10 rounded-xl border-1 border-gray-200 shadow-md flex flex-col gap-4">
       <h3 className='flex gap-2 items-center'>
@@ -109,8 +127,11 @@ const CurrentVitals = ({ vitals }) => {
         <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.heartRate) + ' BPM'} />
         <Card logo={<Activity className='text-blue-500' />} label={'Blood Pressure'} value={String(vitals.bloodPressure) + ' mmHg'} />
         <Card logo={<Wind className='text-green-500' />} label={'O2 Satuartion'} value={String(vitals.oxygenLevel) + ' %'} />
-        {/* <Card logo={<Heart className='text-red-500' />} label={'Heart Rate'} value={String(vitals.ventilatorStatus) + ' BPM'} /> */}
+        <Card logo={<Heart className='text-red-500' />} label={'Ventilator Status'} value={String(vitals.ventilatorStatus).toUpperCase()} />
       </div>
+      {recommondation &&
+        <Card label={recommondation} />
+      }
     </div>
   )
 }
@@ -145,7 +166,7 @@ const FamilyMembers = ({ family }) => {
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const { patient } = usePatient();
+  const { selectedPatient: patient } = usePatient();
   const [emotionData, setEmotionData] = useState({ loading: true, data: null });
   const [vitals, setVitals] = useState({
     loading: true,
@@ -205,7 +226,6 @@ const PatientDashboard = () => {
     };
   }, []);
 
-
   return (
     <GeneralLayout>
       <PageHeader />
@@ -218,5 +238,6 @@ const PatientDashboard = () => {
     </GeneralLayout>
   )
 }
+
 
 export default PatientDashboard

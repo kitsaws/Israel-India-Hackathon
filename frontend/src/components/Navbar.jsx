@@ -15,10 +15,10 @@ const NavbarButton = ({ logo, text, activeClass }) => {
     );
 }
 
-const Navbar = ({selectedPatient}) => {
+const Navbar = () => {
     const navigate = useNavigate();
     const { auth, setAuth } = useAuth();
-    const { patient, setPatient } = usePatient();
+    const { patient, setPatient, selectedPatient } = usePatient();
 
     const handleLogout = async () => {
         try {
@@ -53,7 +53,7 @@ const Navbar = ({selectedPatient}) => {
                     </NavLink>
 
                     {/* will be visible for doctor if 'selectedPatient' field is mentioned */}
-                    {auth.role === 'doctor' && patient && patient.selectedPatient &&
+                    {auth.role === 'doctor' && patient && selectedPatient &&
                         <NavLink to={`/${auth.role}/patient-dashboard`}>
                             {({ isActive }) => (
                                 <NavbarButton logo={<Activity />} text={'Patient Dashboard'} activeClass={(isActive) ? 'bg-accent text-white' : ''} />

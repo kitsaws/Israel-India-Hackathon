@@ -18,7 +18,7 @@ import PatientDashboardNurse from '../pages/nurse/PatientDashboard'
 import PatientGoalsNurse from '../pages/nurse/PatientGoals'
 
 import ProfileDoctor from '../pages/doctor/Profile'
-import PatientDashboardDoctor from '../pages/nurse/PatientDashboard'
+import PatientDashboardDoctor from '../pages/doctor/PatientDashboard'
 
 const AppRoutes = () => {
   return (

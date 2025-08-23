@@ -126,7 +126,7 @@ const CurrentVitals = ({ vitals }) => {
           { withCredentials: true }
         );
         console.log('Vitals recommendation: ', response.data);
-        setRecommendation(response.data.recommondation);
+        setRecommendation(response.data.recommendation);
       } catch(err){
         console.error('Internal Server Error: ', err);
       }
@@ -146,7 +146,9 @@ const CurrentVitals = ({ vitals }) => {
         <Card logo={<Wind className='text-green-500' />} label={'O2 Satuartion'} value={String(vitals.oxygenLevel) + ' %'} />
         <Card logo={<Heart className='text-red-500' />} label={'Ventilator Status'} value={String(vitals.ventilatorStatus).toUpperCase()} />
       </div>
-      <p className='col-span-3'>{recommondation}</p>
+      { recommondation &&
+        <Card label={recommondation} />
+      }
     </div>
   )
 }

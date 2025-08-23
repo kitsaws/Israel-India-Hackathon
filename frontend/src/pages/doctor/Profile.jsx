@@ -36,7 +36,7 @@ const PersonalInformation = ({ doctor }) => {
       </h3>
       <div className='w-full grid grid-cols-2 gap-y-2'>
         <Info label={'Name'} value={doctor.name} />
-        <Info label={'Doctor ID'} value={'N' + String(doctor.doctorId).padStart(4, '0')} />
+        <Info label={'Department'} value={doctor.department} />
         <Info label={'Email'} value={doctor.email} />
         <Info label={'Phone'} value={doctor.telephone} />
       </div>
@@ -77,7 +77,7 @@ const WorkingNurses = ({ nurses }) => {
   )
 };
 
-const PatientList = ({ patient, showAddPatient, setShowAddPatient, setPatient }) => {
+const PatientList = ({ patient, showAddPatient, setShowAddPatient, setSelectedPatient }) => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({ username: '' })
 
@@ -111,9 +111,11 @@ const PatientList = ({ patient, showAddPatient, setShowAddPatient, setPatient })
         `http://localhost:3000/api/doctor/get-patient-data/${p._id}`,
         { withCredentials: true }
       );
-      console.log('selected patient: ', response.data);
+      setSelectedPatient(response.data);
+      localStorage.setItem("selectedPatient", JSON.stringify(response.data));
+      navigate('/doctor/patient-dashboard');
     } catch (err) {
-      console.log(err);
+      console.error('Internal server error- ', err);
     }
   }
 
@@ -198,14 +200,15 @@ const Profile = () => {
   const doctor = auth.user;
 
   // this is an array of patients
-  const { patient, setPatient } = usePatient();
-
+  const { patient, setSelectedPatient } = usePatient();
   const [nurses, setNurses] = useState({ loading: true, data: [] });
   useEffect(() => {
     const fetchNursesList = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/doctor/get-nurse', { withCredentials: true });
-        console.log('Nurses List fetched! ', response.data);
+        const response = await axios.get(
+          'http://localhost:3000/api/doctor/get-nurse', 
+          { withCredentials: true }
+        );
         setNurses({ loading: false, data: response.data });
       } catch (err) {
         console.error('Couldnt fetch nurses list: ', err);
@@ -216,6 +219,11 @@ const Profile = () => {
     fetchNursesList();
   }, [])
 
+  useEffect(() => {
+    localStorage.removeItem('selectedPatient');
+    setSelectedPatient(null);
+  }, [])
+
   const [showAddPatient, setShowAddPatient] = useState(false);
   return (
     <GeneralLayout>
@@ -223,7 +231,7 @@ const Profile = () => {
       <div className='patientData w-full grid grid-cols-2 gap-x-4 gap-y-4'>
         <PersonalInformation doctor={doctor} />
         <WorkingNurses nurses={nurses.data} />
-        <PatientList patient={patient} showAddPatient={showAddPatient} setShowAddPatient={setShowAddPatient} setPatient={setPatient} />
+        <PatientList patient={patient} showAddPatient={showAddPatient} setShowAddPatient={setShowAddPatient} setSelectedPatient={setSelectedPatient} />
       </div>
     </GeneralLayout>
   )
