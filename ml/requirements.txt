@@ -14,4 +14,8 @@ keras
 matplotlib
 Pillow
 tqdm
-
+scikit-learn==1.6.1
+requests
+Flask-Cors
+eventlet
+a
