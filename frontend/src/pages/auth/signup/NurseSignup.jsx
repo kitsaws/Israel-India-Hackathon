@@ -23,12 +23,12 @@ const NurseSignup = () => {
 
     // Basic validation
     if (!formData.fullName || !formData.password || !formData.confirmPassword) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
